@@ -842,7 +842,7 @@ async function sendChat(){
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:getDashboardContext(),tools:[{type:'web_search_20250305',name:'web_search'}],messages:chatHistory})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:getDashboardContext(),tools:[{type:'web_search_20250305',name:'web_search'}],messages:chatHistory})
     });
     const result=await res.json();
     if(result.error){updateMessage(thinkingId,'Error: '+result.error.message);sendBtn.disabled=false;return;}
