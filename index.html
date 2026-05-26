@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arjun Shoor">
+<title>Arjun Shoor — Artist Dashboard</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #1a1a1a;
+  --bg4: #222222;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --accent: #c8a96e;
+  --accent2: #e8c87a;
+  --green: #4ade80;
+  --purple: #a78bfa;
+  --coral: #f87171;
+  --blue: #60a5fa;
+  --amber: #fbbf24;
+  --r: 10px;
+  --r2: 14px;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+/* LAYOUT */
+.app { display: flex; flex-direction: column; height: 100vh; max-width: 680px; margin: 0 auto; }
+.header { padding: 20px 20px 0; flex-shrink: 0; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.logo { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+.logo span { color: var(--text2); font-weight: 400; font-size: 13px; margin-left: 6px; font-family: var(--font-body); }
+.sync-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text3); }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
+.sync-dot.synced { background: var(--green); }
+.sync-dot.syncing { background: var(--amber); animation: pulse 1s infinite; }
+.sync-dot.error { background: var(--coral); }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 20px; }
+.stat { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 12px; }
+.stat-n { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+.stat-l { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; border-bottom: 0.5px solid var(--border); }
+.tab { font-family: var(--font-body); font-size: 13px; padding: 10px 14px; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 5px; transition: color 0.2s; white-space: nowrap; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:hover:not(.active) { color: var(--text); }
+.tab-icon { font-size: 15px; }
+
+/* CONTENT AREA */
+.content { flex: 1; overflow-y: auto; padding: 16px 20px 100px; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* SONG CARDS */
+.song-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r2); margin-bottom: 10px; overflow: hidden; transition: border-color 0.2s; }
+.song-card.active-song { border-color: rgba(200,169,110,0.3); }
+.song-top { display: grid; grid-template-columns: 10px 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; cursor: pointer; user-select: none; }
+.song-top:hover { background: var(--bg3); }
+.active-indicator { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 6px var(--accent); }
+.inactive-indicator { width: 6px; height: 6px; border-radius: 50%; background: var(--bg4); flex-shrink: 0; }
+.song-info { min-width: 0; }
+.song-name { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-sub { font-size: 12px; color: var(--text2); margin-top: 2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.song-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.progress-track { height: 3px; background: var(--bg4); border-radius: 2px; margin-top: 8px; }
+.progress-fill { height: 3px; border-radius: 2px; transition: width 0.4s ease; }
+
+/* EXPAND */
+.song-expand { display: none; border-top: 0.5px solid var(--border); background: var(--bg3); padding: 14px 16px; }
+.song-expand.open { display: block; }
+.expand-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.content-item { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 8px 10px; background: var(--bg2); border-radius: var(--r); margin-bottom: 6px; border: 0.5px solid var(--border); }
+.content-item:last-of-type { margin-bottom: 0; }
+.content-idea { font-size: 13px; color: var(--text); }
+.empty-content { font-size: 12px; color: var(--text3); padding: 8px 0; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.02em; }
+.b-idea { background: rgba(255,255,255,0.06); color: var(--text2); }
+.b-writing { background: rgba(167,139,250,0.15); color: var(--purple); }
+.b-recording { background: rgba(251,191,36,0.15); color: var(--amber); }
+.b-mixing { background: rgba(74,222,128,0.12); color: var(--green); }
+.b-ready { background: rgba(96,165,250,0.12); color: var(--blue); }
+.b-released { background: rgba(200,169,110,0.15); color: var(--accent2); }
+.b-reel { background: rgba(248,113,113,0.12); color: var(--coral); }
+.b-video { background: rgba(96,165,250,0.12); color: var(--blue); }
+.b-story { background: rgba(167,139,250,0.12); color: var(--purple); }
+.b-post { background: rgba(74,222,128,0.12); color: var(--green); }
+.b-teaser { background: rgba(251,191,36,0.12); color: var(--amber); }
+.b-bts { background: rgba(255,255,255,0.06); color: var(--text2); }
+.b-planned { background: rgba(167,139,250,0.12); color: var(--purple); }
+.b-inprogress { background: rgba(251,191,36,0.12); color: var(--amber); }
+.b-done { background: rgba(74,222,128,0.12); color: var(--green); }
+.b-published { background: rgba(200,169,110,0.15); color: var(--accent2); }
+.b-high { background: rgba(248,113,113,0.12); color: var(--coral); }
+.b-medium { background: rgba(251,191,36,0.12); color: var(--amber); }
+.b-low { background: rgba(255,255,255,0.06); color: var(--text2); }
+
+/* BUTTONS */
+.icon-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 4px 6px; border-radius: 6px; font-size: 16px; line-height: 1; display: flex; align-items: center; transition: color 0.2s, background 0.2s; }
+.icon-btn:hover { color: var(--text); background: var(--bg4); }
+.icon-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.add-content-btn { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text3); background: none; border: 0.5px dashed var(--border2); border-radius: var(--r); padding: 7px 10px; cursor: pointer; margin-top: 10px; width: 100%; transition: color 0.2s, border-color 0.2s; }
+.add-content-btn:hover { color: var(--accent); border-color: rgba(200,169,110,0.3); }
+.add-row-btn { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text3); background: none; border: 0.5px dashed var(--border2); border-radius: var(--r2); padding: 12px; cursor: pointer; width: 100%; justify-content: center; margin-top: 8px; transition: color 0.2s; }
+.add-row-btn:hover { color: var(--accent); }
+
+/* RELEASE & PROMO ROWS */
+.list-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r2); overflow: hidden; }
+.list-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 0.5px solid var(--border); }
+.list-title { font-family: var(--font-head); font-size: 14px; font-weight: 600; }
+.table-head { display: grid; padding: 8px 16px; border-bottom: 0.5px solid var(--border); }
+.col-l { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.release-grid { grid-template-columns: 1fr 90px 100px 80px 28px; gap: 10px; align-items: center; }
+.promo-grid { grid-template-columns: 1fr 60px 90px 28px; gap: 10px; align-items: center; }
+.list-row { display: grid; padding: 10px 16px; border-bottom: 0.5px solid var(--border); align-items: center; gap: 10px; }
+.list-row:last-child { border-bottom: none; }
+.row-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.row-sub { font-size: 12px; color: var(--text2); }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+.modal-overlay.open { display: flex; }
+@media(min-width:500px) { .modal-overlay { align-items: center; } }
+.modal { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--r2) var(--r2) 0 0; padding: 20px; width: 100%; max-width: 440px; }
+@media(min-width:500px) { .modal { border-radius: var(--r2); } }
+.modal-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 500; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.field input, .field select { width: 100%; background: var(--bg3); color: var(--text); border: 0.5px solid var(--border2); border-radius: var(--r); padding: 9px 12px; font-size: 13px; font-family: var(--font-body); outline: none; }
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field input::placeholder { color: var(--text3); }
+.field select option { background: var(--bg3); }
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.btn-cancel { background: none; border: 0.5px solid var(--border2); color: var(--text2); border-radius: var(--r); padding: 8px 16px; font-size: 13px; cursor: pointer; font-family: var(--font-body); }
+.btn-cancel:hover { border-color: var(--border2); color: var(--text); }
+.btn-save { background: var(--accent); border: none; color: #000; border-radius: var(--r); padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font-body); }
+.btn-save:hover { background: var(--accent2); }
+.checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
+.checkbox-row input[type=checkbox] { width: auto; accent-color: var(--accent); }
+
+/* FAB */
+.fab { position: fixed; bottom: 24px; right: 24px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: none; color: #000; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(200,169,110,0.4); z-index: 100; transition: transform 0.2s, background 0.2s; }
+.fab:hover { transform: scale(1.05); background: var(--accent2); }
+.fab:active { transform: scale(0.95); }
+
+/* SETUP SCREEN */
+.setup { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 20px; }
+.setup-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.setup-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; max-width: 320px; }
+.setup-input { width: 100%; max-width: 400px; background: var(--bg3); color: var(--text); border: 0.5px solid var(--border2); border-radius: var(--r); padding: 10px 14px; font-size: 13px; font-family: var(--font-body); outline: none; margin-bottom: 10px; }
+.setup-input:focus { border-color: var(--accent); }
+.setup-btn { background: var(--accent); border: none; color: #000; border-radius: var(--r); padding: 10px 24px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: var(--font-body); }
+.setup-note { font-size: 12px; color: var(--text3); margin-top: 12px; max-width: 360px; line-height: 1.6; }
+.setup-note a { color: var(--accent); }
+.setup-error { font-size: 12px; color: var(--coral); margin-top: 8px; display: none; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
+.empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+/* CHEVRON ROTATE */
+.chevron { transition: transform 0.2s; font-size: 13px; color: var(--text3); }
+.chevron.open { transform: rotate(180deg); }
+
+@media(max-width:400px) {
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .stat-n { font-size: 22px; }
+  .release-grid { grid-template-columns: 1fr 80px 70px 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app" style="display:none;">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">Arjun Shoor <span>artist dashboard</span></div>
+      <div class="sync-status">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">—</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="s-songs">0</div><div class="stat-l">Songs</div></div>
+      <div class="stat"><div class="stat-n" id="s-active">0</div><div class="stat-l">Active</div></div>
+      <div class="stat"><div class="stat-n" id="s-content">0</div><div class="stat-l">Content</div></div>
+      <div class="stat"><div class="stat-n" id="s-releases">0</div><div class="stat-l">Releases</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('songs',this)">🎵 Songs</button>
+      <button class="tab" onclick="switchTab('releases',this)">📅 Releases</button>
+      <button class="tab" onclick="switchTab('promo',this)">📣 Promo</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="tab-songs" class="section active">
+      <div id="songs-list"></div>
+      <button class="add-row-btn" onclick="openModal('song')">+ Add song</button>
+    </div>
+    <div id="tab-releases" class="section">
+      <div class="list-card">
+        <div class="list-header">
+          <div class="list-title">Release plan</div>
+        </div>
+        <div class="table-head release-grid">
+          <div class="col-l">Song</div><div class="col-l">Date</div><div class="col-l">Platform</div><div class="col-l">Status</div><div></div>
+        </div>
+        <div id="releases-list"></div>
+      </div>
+      <button class="add-row-btn" onclick="openModal('release')">+ Add release</button>
+    </div>
+    <div id="tab-promo" class="section">
+      <div class="list-card">
+        <div class="list-header">
+          <div class="list-title">Promotion tasks</div>
+        </div>
+        <div class="table-head promo-grid">
+          <div class="col-l">Task</div><div class="col-l">Priority</div><div class="col-l">Status</div><div></div>
+        </div>
+        <div id="promo-list"></div>
+      </div>
+      <button class="add-row-btn" onclick="openModal('promo')">+ Add task</button>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openCurrentTabModal()" title="Add new">+</button>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup">
+    <div class="setup-title">Connect your dashboard</div>
+    <div class="setup-sub">Paste your Firebase config below to enable real-time sync across all your devices.</div>
+    <textarea class="setup-input" id="firebase-config-input" rows="8" placeholder='Paste your firebaseConfig object here, e.g:
+{
+  "apiKey": "...",
+  "authDomain": "...",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
+    <button class="setup-btn" onclick="connectFirebase()">Connect & launch</button>
+    <div class="setup-error" id="setup-error">Could not connect. Check your config and try again.</div>
+    <div class="setup-note">
+      Need help? <a href="https://firebase.google.com" target="_blank">Create a free Firebase project</a> → Firestore Database → Project Settings → Web app → copy the firebaseConfig object.
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+let db = null;
+let data = { songs: [], releases: [], promo: [] };
+let expandedSongs = {};
+let pendingContentIdx = null;
+let currentTab = 'songs';
+let unsubscribers = [];
+
+// ── FIREBASE SETUP ──────────────────────────────────────────────
+const SAVED_CONFIG_KEY = 'arjun_fb_config';
+
+function tryAutoConnect() {
+  const saved = localStorage.getItem(SAVED_CONFIG_KEY);
+  if (saved) {
+    try {
+      initDB(JSON.parse(saved));
+    } catch(e) {
+      showSetup();
+    }
+  } else {
+    showSetup();
+  }
+}
+
+function showSetup() {
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+window.connectFirebase = function() {
+  const raw = document.getElementById('firebase-config-input').value.trim();
+  const err = document.getElementById('setup-error');
+  err.style.display = 'none';
+  try {
+    // Extract just the {...} block
+    const clean = raw.replace(/^[^{]*/, '').replace(/[^}]*$/, '').trim();
+    // Convert JS object literal to valid JSON: quote unquoted keys
+    const json = clean
+      .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*:)/g, '$1"$2"$3')
+      .replace(/:\s*'([^']*)'/g, ': "$1"');
+    const cfg = JSON.parse(json);
+    localStorage.setItem(SAVED_CONFIG_KEY, JSON.stringify(cfg));
+    initDB(cfg);
+  } catch(e) {
+    err.style.display = 'block';
+    console.error(e);
+  }
+};
+
+function initDB(cfg) {
+  try {
+    const app = initializeApp(cfg);
+    db = getFirestore(app);
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    setSyncStatus('syncing', 'Connecting…');
+    subscribeAll();
+  } catch(e) {
+    document.getElementById('setup-error').style.display = 'block';
+  }
+}
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label;
+}
+
+// ── FIRESTORE SUBSCRIBE ──────────────────────────────────────────
+function subscribeAll() {
+  unsubscribers.forEach(u => u());
+  unsubscribers = [];
+
+  ['songs','releases','promo'].forEach(col => {
+    const unsub = onSnapshot(collection(db, col), snap => {
+      data[col] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (col === 'songs') data.songs.sort((a,b) => (a.order||0)-(b.order||0));
+      render();
+      setSyncStatus('synced', 'Synced');
+    }, err => {
+      setSyncStatus('error', 'Sync error');
+    });
+    unsubscribers.push(unsub);
+  });
+}
+
+async function saveDoc(col, item) {
+  setSyncStatus('syncing', 'Saving…');
+  const { id, ...rest } = item;
+  await setDoc(doc(db, col, id), rest);
+}
+
+async function removeDoc(col, id) {
+  setSyncStatus('syncing', 'Saving…');
+  await deleteDoc(doc(db, col, id));
+}
+
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ── RENDER ───────────────────────────────────────────────────────
+function stageBadge(s) {
+  return { 'Idea':'b-idea','Writing':'b-writing','Recording':'b-recording','Mixing':'b-mixing','Ready':'b-ready','Released':'b-released' }[s] || 'b-idea';
+}
+function progressPct(s) {
+  return { 'Idea':5,'Writing':25,'Recording':55,'Mixing':80,'Ready':95,'Released':100 }[s]||0;
+}
+function progressColor(s) {
+  return { 'Idea':'#555','Writing':'#a78bfa','Recording':'#fbbf24','Mixing':'#4ade80','Ready':'#60a5fa','Released':'#c8a96e' }[s]||'#555';
+}
+function contentTypeBadge(t) {
+  return { 'Reel':'b-reel','YouTube video':'b-video','Story':'b-story','Post':'b-post','Teaser':'b-teaser','Behind the scenes':'b-bts' }[t]||'b-idea';
+}
+function statusBadge(s) {
+  return { 'Idea':'b-idea','Planned':'b-planned','In progress':'b-inprogress','Done':'b-done','Published':'b-published','Released':'b-released' }[s]||'b-idea';
+}
+function priorityBadge(p) {
+  return { 'High':'b-high','Medium':'b-medium','Low':'b-low' }[p]||'b-low';
+}
+
+function renderSongs() {
+  const el = document.getElementById('songs-list');
+  if (!data.songs.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🎵</div>No songs yet. Add your first song below.</div>';
+    return;
+  }
+  const activeCount = data.songs.filter(s=>s.active).length;
+  el.innerHTML = data.songs.map((song, i) => {
+    const pct = progressPct(song.stage);
+    const col = progressColor(song.stage);
+    const isOpen = !!expandedSongs[song.id];
+    const content = song.content || [];
+    const contentRows = content.length ? content.map((c, ci) => `
+      <div class="content-item">
+        <div class="content-idea">${c.idea}</div>
+        <span class="badge ${contentTypeBadge(c.type)}">${c.type}</span>
+        <span class="badge ${statusBadge(c.status)}">${c.status}</span>
+        <button class="icon-btn" onclick="deleteContent('${song.id}',${ci})">🗑</button>
+      </div>`).join('') : '<div class="empty-content">No content yet — add reels, teasers, posts.</div>';
+
+    return `<div class="song-card ${song.active?'active-song':''}">
+      <div class="song-top" onclick="toggleExpand('${song.id}')">
+        <div class="${song.active?'active-indicator':'inactive-indicator'}"></div>
+        <div class="song-info">
+          <div class="song-name">${song.name}</div>
+          <div class="song-sub">
+            <span class="badge ${stageBadge(song.stage)}">${song.stage}</span>
+            <span style="color:var(--text3);">${song.priority||''}</span>
+            ${song.notes ? `<span style="color:var(--text3);font-style:italic;">${song.notes}</span>` : ''}
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${col};"></div></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">${pct}% · ${content.length} content piece${content.length!==1?'s':''}</div>
+        </div>
+        <div class="song-actions">
+          <button class="icon-btn" onclick="event.stopPropagation();toggleActive('${song.id}')" title="${song.active?'Pause':'Set active'}" ${!song.active&&activeCount>=3?'disabled':''}>
+            ${song.active ? '⏸' : '▶'}
+          </button>
+          <button class="icon-btn" onclick="event.stopPropagation();deleteSong('${song.id}')">🗑</button>
+          <span class="chevron ${isOpen?'open':''}">⌄</span>
+        </div>
+      </div>
+      <div class="song-expand ${isOpen?'open':''}">
+        <div class="expand-label">Content for this song</div>
+        ${contentRows}
+        <button class="add-content-btn" onclick="openContentModal('${song.id}')">+ Add content</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderReleases() {
+  const el = document.getElementById('releases-list');
+  if (!data.releases.length) {
+    el.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon">📅</div>No releases planned yet.</div>';
+    return;
+  }
+  el.innerHTML = data.releases.map(r => `
+    <div class="list-row release-grid">
+      <div class="row-name">${r.song}</div>
+      <div class="row-sub">${r.date||'TBD'}</div>
+      <div class="row-sub">${r.platform||'—'}</div>
+      <span class="badge ${statusBadge(r.status)}">${r.status}</span>
+      <button class="icon-btn" onclick="removeDoc('releases','${r.id}')">🗑</button>
+    </div>`).join('');
+}
+
+function renderPromo() {
+  const el = document.getElementById('promo-list');
+  if (!data.promo.length) {
+    el.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon">📣</div>No promo tasks yet.</div>';
+    return;
+  }
+  el.innerHTML = data.promo.map(p => `
+    <div class="list-row promo-grid">
+      <div class="row-name">${p.task}</div>
+      <span class="badge ${priorityBadge(p.priority)}">${p.priority}</span>
+      <span class="badge ${statusBadge(p.status)}">${p.status}</span>
+      <button class="icon-btn" onclick="removeDoc('promo','${p.id}')">🗑</button>
+    </div>`).join('');
+}
+
+function updateStats() {
+  document.getElementById('s-songs').textContent = data.songs.length;
+  document.getElementById('s-active').textContent = data.songs.filter(s=>s.active).length;
+  document.getElementById('s-content').textContent = data.songs.reduce((a,s)=>a+(s.content||[]).length,0);
+  document.getElementById('s-releases').textContent = data.releases.filter(r=>r.status!=='Released').length;
+}
+
+function render() { renderSongs(); renderReleases(); renderPromo(); updateStats(); }
+
+// ── ACTIONS ──────────────────────────────────────────────────────
+window.toggleExpand = function(id) { expandedSongs[id] = !expandedSongs[id]; render(); };
+
+window.toggleActive = function(id) {
+  const song = data.songs.find(s=>s.id===id);
+  if (!song) return;
+  const active = data.songs.filter(s=>s.active).length;
+  if (!song.active && active >= 3) return;
+  saveDoc('songs', { ...song, active: !song.active });
+};
+
+window.deleteSong = function(id) { if(confirm('Delete this song?')) removeDoc('songs', id); };
+
+window.deleteContent = function(songId, ci) {
+  const song = data.songs.find(s=>s.id===songId);
+  if (!song) return;
+  const content = [...(song.content||[])];
+  content.splice(ci,1);
+  saveDoc('songs', { ...song, content });
+};
+
+window.removeDoc = removeDoc;
+
+// ── TABS ─────────────────────────────────────────────────────────
+window.switchTab = function(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+};
+
+window.openCurrentTabModal = function() { openModal(currentTab === 'songs' ? 'song' : currentTab === 'releases' ? 'release' : 'promo'); };
+
+// ── MODAL ────────────────────────────────────────────────────────
+window.openModal = function(type) {
+  const box = document.getElementById('modal-box');
+  if (type === 'song') {
+    box.innerHTML = `<div class="modal-title">Add song</div>
+      <div class="field"><label>Song name</label><input type="text" id="m-name" placeholder="e.g. Dil Wala"></div>
+      <div class="modal-row">
+        <div class="field"><label>Stage</label><select id="m-stage"><option>Idea</option><option>Writing</option><option>Recording</option><option>Mixing</option><option>Ready</option><option>Released</option></select></div>
+        <div class="field"><label>Priority</label><select id="m-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="field"><label>Notes (optional)</label><input type="text" id="m-notes" placeholder="collab, vibe, concept..."></div>
+      <div class="field"><label class="checkbox-row"><input type="checkbox" id="m-active"> Set as active (max 3 at a time)</label></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveSong()">Add song</button></div>`;
+  } else if (type === 'release') {
+    const opts = data.songs.map(s=>`<option>${s.name}</option>`).join('');
+    box.innerHTML = `<div class="modal-title">Add release</div>
+      <div class="field"><label>Song</label><select id="m-song">${opts||'<option>Add songs first</option>'}</select></div>
+      <div class="modal-row">
+        <div class="field"><label>Target date</label><input type="date" id="m-date"></div>
+        <div class="field"><label>Platform</label><select id="m-platform"><option>All platforms</option><option>Spotify</option><option>YouTube</option><option>Instagram</option></select></div>
+      </div>
+      <div class="field"><label>Status</label><select id="m-status"><option>Planned</option><option>In progress</option><option>Released</option></select></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveRelease()">Add</button></div>`;
+  } else if (type === 'promo') {
+    box.innerHTML = `<div class="modal-title">Add promo task</div>
+      <div class="field"><label>Task</label><input type="text" id="m-task" placeholder="e.g. Pitch to Spotify playlists"></div>
+      <div class="modal-row">
+        <div class="field"><label>Priority</label><select id="m-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+        <div class="field"><label>Status</label><select id="m-status"><option>Planned</option><option>In progress</option><option>Done</option></select></div>
+      </div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="savePromo()">Add</button></div>`;
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+};
+
+window.openContentModal = function(songId) {
+  pendingContentIdx = songId;
+  const song = data.songs.find(s=>s.id===songId);
+  const box = document.getElementById('modal-box');
+  box.innerHTML = `<div class="modal-title">Add content — ${song.name}</div>
+    <div class="field"><label>Content idea</label><input type="text" id="m-idea" placeholder="e.g. Studio session reel"></div>
+    <div class="modal-row">
+      <div class="field"><label>Type</label><select id="m-type"><option>Reel</option><option>YouTube video</option><option>Story</option><option>Post</option><option>Teaser</option><option>Behind the scenes</option></select></div>
+      <div class="field"><label>Status</label><select id="m-status"><option>Idea</option><option>Planned</option><option>In progress</option><option>Done</option><option>Published</option></select></div>
+    </div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveContent()">Add</button></div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+};
+
+window.closeModal = function() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  pendingContentIdx = null;
+};
+
+window.saveSong = function() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) return;
+  const active = data.songs.filter(s=>s.active).length;
+  const wantActive = document.getElementById('m-active').checked;
+  saveDoc('songs', { id: genId(), name, stage: document.getElementById('m-stage').value, priority: document.getElementById('m-priority').value, notes: document.getElementById('m-notes').value.trim(), active: wantActive && active < 3, content: [], order: Date.now() });
+  closeModal();
+};
+
+window.saveContent = function() {
+  const idea = document.getElementById('m-idea').value.trim();
+  if (!idea || !pendingContentIdx) return;
+  const song = data.songs.find(s=>s.id===pendingContentIdx);
+  if (!song) return;
+  const content = [...(song.content||[]), { idea, type: document.getElementById('m-type').value, status: document.getElementById('m-status').value }];
+  expandedSongs[song.id] = true;
+  saveDoc('songs', { ...song, content });
+  closeModal();
+};
+
+window.saveRelease = function() {
+  const song = document.getElementById('m-song').value;
+  if (!song) return;
+  saveDoc('releases', { id: genId(), song, date: document.getElementById('m-date').value, platform: document.getElementById('m-platform').value, status: document.getElementById('m-status').value });
+  closeModal();
+};
+
+window.savePromo = function() {
+  const task = document.getElementById('m-task').value.trim();
+  if (!task) return;
+  saveDoc('promo', { id: genId(), task, priority: document.getElementById('m-priority').value, status: document.getElementById('m-status').value });
+  closeModal();
+};
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+
+// ── BOOT ─────────────────────────────────────────────────────────
+tryAutoConnect();
+</script>
+
+<!-- PWA SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
