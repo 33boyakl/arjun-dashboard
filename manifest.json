@@ -2,15 +2,15 @@
   "name": "Arjun Shoor — Artist Dashboard",
   "short_name": "Arjun Shoor",
   "description": "Artist strategy dashboard for Arjun Shoor",
-  "start_url": "/index.html",
+  "start_url": "/arjun-dashboard/index.html",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#4a5240",
+  "theme_color": "#4a5240",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='%23c8a96e'>♪</text></svg>",
-      "sizes": "192x192",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'%3E%3Crect width='144' height='144' rx='14' fill='%234a5240'/%3E%3Ctext x='72' y='104' text-anchor='middle' font-family='Georgia,serif' font-size='82' font-weight='400' fill='%23c8a96e' letter-spacing='2'%3EAS%3C/text%3E%3C/svg%3E",
+      "sizes": "144x144",
       "type": "image/svg+xml"
     }
   ]
