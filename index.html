@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#4a5240">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,11 +21,13 @@
   --green:#4ade80;--purple:#a78bfa;--coral:#f87171;--blue:#60a5fa;--amber:#fbbf24;
   --r:10px;--r2:14px;
   --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-logo:'Cinzel',serif;
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
-.app{display:flex;flex-direction:column;height:100vh;max-width:680px;margin:0 auto;}
-.header{padding:14px 16px 0;flex-shrink:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;touch-action:manipulation;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:680px;margin:0 auto;}
+.header{padding:14px 16px 0;flex-shrink:0;padding-top:max(14px, env(safe-area-inset-top));}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .logo-text{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--accent);letter-spacing:-0.02em;}
 .logo-sub{font-size:11px;color:var(--text3);margin-top:1px;}
@@ -41,9 +43,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .stat-l{font-size:10px;color:var(--text2);margin-top:2px;}
 .tabs{display:flex;gap:2px;border-bottom:0.5px solid var(--border);overflow-x:auto;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{font-size:12px;padding:8px 12px;color:var(--text2);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:var(--font-body);}
+.tab{font-size:12px;padding:8px 12px;color:var(--text2);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:var(--font-body);-webkit-user-select:none;user-select:none;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.content{flex:1;overflow-y:auto;padding:14px 16px 90px;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 16px;padding-bottom:calc(80px + var(--safe-bottom));-webkit-overflow-scrolling:touch;}
 .section{display:none;}
 .section.active{display:block;}
 
@@ -66,16 +68,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .b-bts{background:rgba(255,255,255,0.06);color:var(--text2)}
 
 /* SONG CARDS */
-.song-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;transition:border-color 0.2s;}
+.song-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;}
 .song-card.active-song{border-color:rgba(200,169,110,0.3);}
-.song-top{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;user-select:none;}
-.song-top:hover{background:var(--bg3);}
+.song-top{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;-webkit-user-select:none;user-select:none;}
+.song-top:active{background:var(--bg3);}
 .active-ind{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);flex-shrink:0;}
 .inactive-ind{width:6px;height:6px;border-radius:50%;background:var(--bg4);flex-shrink:0;}
 .song-name{font-family:var(--font-head);font-size:14px;font-weight:600;}
 .song-actions{display:flex;align-items:center;gap:3px;flex-shrink:0;}
 .track-steps{display:flex;gap:3px;margin-top:6px;}
-.track-step{flex:1;height:4px;border-radius:2px;background:var(--bg4);transition:background 0.3s;}
+.track-step{flex:1;height:4px;border-radius:2px;background:var(--bg4);}
 .track-step.done{background:var(--green);}
 .track-step.partial{background:var(--amber);}
 .track-pct{font-size:10px;color:var(--text3);margin-top:3px;}
@@ -87,19 +89,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .check-item{display:flex;align-items:flex-start;gap:10px;background:var(--bg2);border-radius:var(--r);padding:10px 12px;border:0.5px solid var(--border);}
 .check-right{flex:1;min-width:0;}
 .check-name{font-size:13px;font-weight:500;}
-.check-status-btns{display:flex;gap:4px;margin-top:5px;}
-.csbtn{font-size:10px;padding:2px 7px;border-radius:10px;border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;font-family:var(--font-body);}
+.check-status-btns{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.csbtn{font-size:10px;padding:3px 8px;border-radius:10px;border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;font-family:var(--font-body);}
 .csbtn.active-done{background:rgba(74,222,128,0.15);color:var(--green);border-color:var(--green);}
 .csbtn.active-partial{background:rgba(251,191,36,0.15);color:var(--amber);border-color:var(--amber);}
-.csbtn.active-todo{background:rgba(255,255,255,0.06);color:var(--text2);border-color:var(--border2);}
-.check-note-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--text);font-family:var(--font-body);outline:none;margin-top:4px;}
+.csbtn.active-todo{background:rgba(255,255,255,0.06);color:var(--text2);}
+.check-note-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:12px;color:var(--text);font-family:var(--font-body);outline:none;margin-top:4px;}
 .check-note-input:focus{border-color:var(--accent);}
 .song-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .meta-field{background:var(--bg2);border-radius:var(--r);padding:8px 10px;border:0.5px solid var(--border);}
 .meta-label{font-size:10px;color:var(--text3);margin-bottom:3px;}
 .meta-input{width:100%;background:none;border:none;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;}
 .meta-input::placeholder{color:var(--text3);}
-.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;}
+.status-pill{display:inline-flex;align-items:center;font-size:10px;padding:2px 8px;border-radius:20px;}
 .sp-active{background:rgba(200,169,110,0.15);color:var(--accent);}
 .sp-completed{background:rgba(74,222,128,0.12);color:var(--green);}
 .sp-paused{background:rgba(255,255,255,0.06);color:var(--text2);}
@@ -107,13 +109,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .empty-content{font-size:12px;color:var(--text3);padding:6px 0;}
 
 /* BUTTONS */
-.icon-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:3px 5px;border-radius:6px;font-size:15px;line-height:1;display:flex;align-items:center;transition:color 0.2s,background 0.2s;}
-.icon-btn:hover{color:var(--text);background:var(--bg4);}
-.icon-btn:disabled{opacity:0.25;cursor:not-allowed;}
-.add-content-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);background:none;border:0.5px dashed var(--border2);border-radius:var(--r);padding:6px 10px;cursor:pointer;margin-top:8px;width:100%;}
-.add-content-btn:hover{color:var(--accent);}
-.add-row-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);background:none;border:0.5px dashed var(--border2);border-radius:var(--r2);padding:12px;cursor:pointer;width:100%;justify-content:center;margin-top:8px;}
-.add-row-btn:hover{color:var(--accent);}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:5px 6px;border-radius:6px;font-size:16px;line-height:1;display:flex;align-items:center;}
+.icon-btn:active{color:var(--text);background:var(--bg4);}
+.icon-btn:disabled{opacity:0.25;}
+.add-content-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text3);background:none;border:0.5px dashed var(--border2);border-radius:var(--r);padding:8px 10px;cursor:pointer;margin-top:8px;width:100%;}
+.add-row-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text3);background:none;border:0.5px dashed var(--border2);border-radius:var(--r2);padding:14px;cursor:pointer;width:100%;justify-content:center;margin-top:8px;}
 
 /* LIST */
 .list-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);overflow:hidden;}
@@ -122,119 +122,109 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .table-head{display:grid;padding:7px 14px;border-bottom:0.5px solid var(--border);}
 .col-l{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;}
 .release-grid{grid-template-columns:1fr 90px 100px 75px 26px;gap:8px;align-items:center;}
-.list-row{display:grid;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;gap:8px;}
+.list-row{display:grid;padding:10px 14px;border-bottom:0.5px solid var(--border);align-items:center;gap:8px;}
 .list-row:last-child{border-bottom:none;}
 .row-name{font-size:13px;font-weight:500;}
 .row-sub{font-size:11px;color:var(--text2);}
 .empty{text-align:center;padding:30px 20px;color:var(--text3);font-size:13px;}
 
 /* CALENDAR */
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cal-title{font-family:var(--font-head);font-size:16px;font-weight:700;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-title{font-family:var(--font-head);font-size:15px;font-weight:700;}
 .cal-nav{display:flex;gap:6px;}
-.cal-nav button{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:5px 10px;color:var(--text2);cursor:pointer;font-size:13px;}
-.cal-nav button:hover{color:var(--text);}
+.cal-nav button{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:6px 12px;color:var(--text2);cursor:pointer;font-size:14px;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .cal-day-label{text-align:center;font-size:10px;color:var(--text3);padding:4px 0;font-weight:500;}
-.cal-cell{background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;min-height:72px;padding:5px;cursor:pointer;transition:border-color 0.2s;}
-.cal-cell:hover{border-color:var(--border2);}
+.cal-cell{background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;min-height:68px;padding:4px;cursor:pointer;overflow:hidden;}
+.cal-cell:active{border-color:var(--border2);}
 .cal-cell.today{border-color:var(--accent);}
-.cal-cell.other-month{opacity:0.25;}
-.cal-date{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:3px;}
+.cal-cell.other-month{opacity:0.2;}
+.cal-date{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:2px;}
 .cal-cell.today .cal-date{color:var(--accent);}
-.cal-event{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:opacity 0.15s;}
-.cal-event:hover{opacity:0.8;}
+.cal-event{font-size:9px;padding:2px 4px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;cursor:pointer;display:block;}
 .ev-content{background:rgba(248,113,113,0.2);color:var(--coral);}
 .ev-recording{background:rgba(251,191,36,0.2);color:var(--amber);}
 .ev-release{background:rgba(200,169,110,0.2);color:var(--accent2);}
 .ev-promo{background:rgba(167,139,250,0.2);color:var(--purple);}
 .ev-mixing{background:rgba(74,222,128,0.15);color:var(--green);}
 .ev-writing{background:rgba(96,165,250,0.15);color:var(--blue);}
-.cal-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.cal-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 .legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);}
-.legend-dot{width:8px;height:8px;border-radius:2px;}
-.gcal-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:7px 12px;cursor:pointer;margin-bottom:12px;width:100%;justify-content:center;}
-.gcal-btn:hover{color:var(--accent);border-color:var(--accent);}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.gcal-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 12px;cursor:pointer;margin-bottom:10px;width:100%;justify-content:center;}
 .gcal-btn.connected{color:var(--green);border-color:rgba(74,222,128,0.3);}
+
+/* RECURRENCE DAYS */
+.day-picker{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.day-chip{width:36px;height:36px;border-radius:50%;border:0.5px solid var(--border2);background:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;justify-content:center;}
+.day-chip.selected{background:var(--accent);color:#000;border-color:var(--accent);}
 
 /* AI CHAT */
 .chat-wrap{display:flex;flex-direction:column;height:100%;}
-.chat-messages{flex:1;overflow-y:auto;padding-bottom:10px;}
+.chat-messages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px;}
 .chat-msg{margin-bottom:12px;display:flex;flex-direction:column;}
 .chat-msg.user{align-items:flex-end;}
 .chat-msg.ai{align-items:flex-start;}
-.chat-bubble{max-width:85%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;}
+.chat-bubble{max-width:86%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;}
 .chat-msg.user .chat-bubble{background:var(--accent);color:#000;border-bottom-right-radius:4px;}
 .chat-msg.ai .chat-bubble{background:var(--bg2);border:0.5px solid var(--border);color:var(--text);border-bottom-left-radius:4px;}
 .chat-msg.ai .chat-bubble.thinking{color:var(--text3);font-style:italic;}
-.chat-date-divider{text-align:center;font-size:10px;color:var(--text3);margin:8px 0;letter-spacing:0.04em;}
 .chat-input-wrap{display:flex;gap:8px;padding-top:10px;border-top:0.5px solid var(--border);flex-shrink:0;}
-.chat-input{flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r2);padding:10px 14px;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;resize:none;min-height:42px;max-height:120px;}
+.chat-input{flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r2);padding:10px 14px;color:var(--text);font-size:15px;font-family:var(--font-body);outline:none;resize:none;min-height:44px;max-height:120px;}
 .chat-input:focus{border-color:var(--accent);}
-.chat-send{background:var(--accent);border:none;border-radius:var(--r2);padding:10px 14px;color:#000;font-size:16px;cursor:pointer;flex-shrink:0;}
-.chat-send:hover{background:var(--accent2);}
-.chat-send:disabled{opacity:0.4;cursor:not-allowed;}
+.chat-send{background:var(--accent);border:none;border-radius:var(--r2);padding:10px 14px;color:#000;font-size:18px;cursor:pointer;flex-shrink:0;min-width:44px;}
+.chat-send:disabled{opacity:0.4;}
 .chat-suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-.chat-suggestion{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--text2);cursor:pointer;white-space:nowrap;}
-.chat-suggestion:hover{color:var(--accent);border-color:var(--accent);}
+.chat-suggestion{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;}
 .action-tag{display:inline-block;background:rgba(200,169,110,0.15);color:var(--accent);font-size:10px;padding:2px 6px;border-radius:4px;margin-top:4px;}
 .chat-toolbar{display:flex;justify-content:flex-end;padding-bottom:8px;border-bottom:0.5px solid var(--border);margin-bottom:8px;flex-shrink:0;}
-.clear-chat-btn{font-size:11px;color:var(--text3);background:none;border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-family:var(--font-body);}
-.clear-chat-btn:hover{color:var(--coral);border-color:var(--coral);}
+.clear-chat-btn{font-size:11px;color:var(--text3);background:none;border:0.5px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:var(--font-body);}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
 @media(min-width:500px){.modal-overlay{align-items:center;}}
-.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r2) var(--r2) 0 0;padding:18px;width:100%;max-width:440px;max-height:85vh;overflow-y:auto;}
-@media(min-width:500px){.modal{border-radius:var(--r2);}}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r2) var(--r2) 0 0;padding:20px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(20px + var(--safe-bottom));}
+@media(min-width:500px){.modal{border-radius:var(--r2);padding-bottom:20px;}}
 .modal-title{font-family:var(--font-head);font-size:15px;font-weight:700;margin-bottom:14px;}
-.field{margin-bottom:10px;}
-.field label{display:block;font-size:10px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
-.field input,.field select,.field textarea{width:100%;background:var(--bg3);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 12px;font-size:13px;font-family:var(--font-body);outline:none;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:10px;font-weight:500;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:15px;font-family:var(--font-body);outline:none;-webkit-appearance:none;appearance:none;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
 .field input::placeholder,.field textarea::placeholder{color:var(--text3);}
 .field select option{background:var(--bg3);}
-.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
-.btn-cancel{background:none;border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--r);padding:7px 14px;font-size:13px;cursor:pointer;font-family:var(--font-body);}
-.btn-delete{background:none;border:0.5px solid rgba(248,113,113,0.3);color:var(--coral);border-radius:var(--r);padding:7px 14px;font-size:13px;cursor:pointer;font-family:var(--font-body);}
-.btn-save{background:var(--accent);border:none;color:#000;border-radius:var(--r);padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-body);}
-.btn-save:hover{background:var(--accent2);}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.btn-cancel{background:none;border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--r);padding:9px 16px;font-size:13px;cursor:pointer;font-family:var(--font-body);}
+.btn-delete{background:none;border:0.5px solid rgba(248,113,113,0.3);color:var(--coral);border-radius:var(--r);padding:9px 16px;font-size:13px;cursor:pointer;font-family:var(--font-body);}
+.btn-save{background:var(--accent);border:none;color:#000;border-radius:var(--r);padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-body);}
 .checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);}
 .checkbox-row input[type=checkbox]{width:auto;accent-color:var(--accent);}
-.fab{position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:var(--accent);border:none;color:#000;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,169,110,0.4);z-index:100;}
-.fab:hover{background:var(--accent2);}
+.fab{position:fixed;bottom:calc(20px + var(--safe-bottom));right:20px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;color:#000;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,169,110,0.4);z-index:100;}
 .chevron{transition:transform 0.2s;font-size:12px;color:var(--text3);}
 .chevron.open{transform:rotate(180deg);}
 
-/* NOTIFICATION BADGE */
-.notif-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--r);padding:8px 10px;margin-top:6px;}
-.notif-label{font-size:12px;color:var(--text2);flex:1;}
-.notif-toggle{position:relative;width:36px;height:20px;flex-shrink:0;}
-.notif-toggle input{opacity:0;width:0;height:0;}
-.notif-slider{position:absolute;inset:0;background:var(--bg4);border-radius:10px;cursor:pointer;transition:0.3s;}
-.notif-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:0.3s;}
-.notif-toggle input:checked+.notif-slider{background:var(--accent);}
-.notif-toggle input:checked+.notif-slider:before{transform:translateX(16px);background:#000;}
-
 /* SETUP */
-.setup{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px;background:var(--bg);}
+.setup{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;text-align:center;padding:24px;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .setup-logo{margin-bottom:16px;}
 .setup-title{font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:6px;color:var(--accent);}
 .setup-sub{font-size:13px;color:var(--text2);margin-bottom:20px;max-width:320px;line-height:1.6;}
 .setup-step{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:16px;width:100%;max-width:420px;margin-bottom:10px;text-align:left;}
 .setup-step-title{font-family:var(--font-head);font-size:13px;font-weight:600;margin-bottom:8px;}
-.setup-input{width:100%;background:var(--bg3);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--r);padding:9px 12px;font-size:12px;font-family:var(--font-body);outline:none;margin-bottom:4px;}
+.setup-input{width:100%;background:var(--bg3);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:14px;font-family:var(--font-body);outline:none;margin-bottom:4px;-webkit-appearance:none;}
 .setup-input:focus{border-color:var(--accent);}
-.setup-btn{background:var(--accent);border:none;color:#000;border-radius:var(--r);padding:10px 22px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);width:100%;max-width:420px;margin-top:4px;}
+.setup-btn{background:var(--accent);border:none;color:#000;border-radius:var(--r);padding:12px 22px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font-body);width:100%;max-width:420px;margin-top:4px;}
 .setup-note{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.6;}
 .setup-note a{color:var(--accent);}
 .setup-error{font-size:12px;color:var(--coral);margin-top:6px;display:none;max-width:420px;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
-@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}.release-grid{grid-template-columns:1fr 80px 65px 24px}}
+@media(max-width:380px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .cal-cell{min-height:56px;}
+  .release-grid{grid-template-columns:1fr 75px 60px 24px;}
+}
 </style>
 </head>
 <body>
@@ -276,7 +266,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div id="tab-calendar" class="section">
       <button class="gcal-btn" id="gcal-btn" onclick="connectGoogleCalendar()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.5"/></svg>
-        Connect Google Calendar
+        Connect Google Calendar (for reminders)
       </button>
       <div class="cal-header">
         <div class="cal-title" id="cal-title"></div>
@@ -305,7 +295,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     </div>
 
     <!-- AI CHAT -->
-    <div id="tab-ai" class="section" style="height:calc(100vh - 200px);display:none;flex-direction:column;">
+    <div id="tab-ai" class="section" style="height:calc(100dvh - 200px);display:none;flex-direction:column;">
       <div class="chat-wrap">
         <div class="chat-toolbar">
           <button class="clear-chat-btn" onclick="clearChat()">Clear history</button>
@@ -328,7 +318,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 </div>
 
 <!-- SETUP -->
-<div id="setup-screen">
+<div id="setup-screen" style="display:flex;">
   <div class="setup">
     <div class="setup-logo">
       <svg width="64" height="64" viewBox="0 0 144 144" style="border-radius:16px;">
@@ -337,7 +327,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </svg>
     </div>
     <div class="setup-title">Arjun Shoor</div>
-    <div class="setup-sub">Connect your dashboard — one-time setup, works forever across all devices.</div>
+    <div class="setup-sub">Connect your dashboard — one-time setup, syncs across all devices.</div>
     <div class="setup-step">
       <div class="setup-step-title">1. Firebase config</div>
       <textarea class="setup-input" id="firebase-config-input" rows="5" placeholder='{
@@ -349,7 +339,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div class="setup-note"><a href="https://console.firebase.google.com" target="_blank">Firebase Console</a> → Project Settings → Your apps → Web → copy firebaseConfig</div>
     </div>
     <div class="setup-step">
-      <div class="setup-step-title">2. Anthropic API key (for AI assistant)</div>
+      <div class="setup-step-title">2. Anthropic API key (AI assistant)</div>
       <input type="password" class="setup-input" id="anthropic-key-input" placeholder="sk-ant-...">
       <div class="setup-note"><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys → Create Key</div>
     </div>
@@ -367,253 +357,217 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-let db = null;
-let anthropicKey = '';
-let data = { songs: [], releases: [], events: [], chatHistory: [] };
-let expandedSongs = {};
-let pendingContentIdx = null;
-let currentTab = 'songs';
-let calYear, calMonth;
-let editingEventId = null;
-let unsubscribers = [];
-let notifPermission = false;
+let db=null, anthropicKey='';
+let data={songs:[],releases:[],events:[]};
+let expandedSongs={}, pendingContentIdx=null, currentTab='songs';
+let calYear, calMonth, editingEventId=null, unsubscribers=[];
+let displayMessages=[], chatHistory=[];
+let selectedDays=[];
 
-const now = new Date();
-calYear = now.getFullYear(); calMonth = now.getMonth();
+const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth();
+const FB_KEY='arjun_fb_config', AI_KEY='arjun_ai_key', CHAT_KEY='arjun_chat_v2';
 
-const FB_KEY = 'arjun_fb_config';
-const AI_KEY = 'arjun_ai_key';
-const CHAT_STORAGE_KEY = 'arjun_chat_history';
-
-const TRACK_STEPS = [
+const TRACK_STEPS=[
   {key:'beat',label:'Beat / Music'},
-  {key:'bpm',label:'BPM & Scale'},
-  {key:'lyrics',label:'Lyrics'},
-  {key:'vocals',label:'Vocals recorded'},
-  {key:'comping',label:'Comping'},
-  {key:'mixing',label:'Mixing'},
-  {key:'mastering',label:'Mastering'},
+  {key:'lyrics',label:'Lyrics'},{key:'vocals',label:'Vocals recorded'},
+  {key:'comping',label:'Comping'},{key:'mixing',label:'Mixing'},{key:'mastering',label:'Mastering'},
 ];
 
+const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
 // ── SETUP ────────────────────────────────────────────────────────
-function tryAutoConnect() {
-  const fb = localStorage.getItem(FB_KEY);
-  const ai = localStorage.getItem(AI_KEY);
-  if (fb) { if (ai) anthropicKey = ai; try { initDB(JSON.parse(fb)); return; } catch(e) {} }
-  showSetup();
+function tryAutoConnect(){
+  const fb=localStorage.getItem(FB_KEY), ai=localStorage.getItem(AI_KEY);
+  if(fb){if(ai)anthropicKey=ai;try{initDB(JSON.parse(fb));return;}catch(e){}}
+  document.getElementById('setup-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
 }
 
-function showSetup() {
-  document.getElementById('setup-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-window.connectAll = function() {
-  const fbRaw = document.getElementById('firebase-config-input').value.trim();
-  const aiKey = document.getElementById('anthropic-key-input').value.trim();
-  const err = document.getElementById('setup-error');
-  err.style.display = 'none';
-  try {
-    const clean = fbRaw.replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
-    const json = clean.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*:)/g,'$1"$2"$3').replace(/:\s*'([^']*)'/g,': "$1"');
-    const cfg = JSON.parse(json);
-    localStorage.setItem(FB_KEY, JSON.stringify(cfg));
-    if (aiKey) { anthropicKey = aiKey; localStorage.setItem(AI_KEY, aiKey); }
+window.connectAll=function(){
+  const fbRaw=document.getElementById('firebase-config-input').value.trim();
+  const aiKey=document.getElementById('anthropic-key-input').value.trim();
+  const err=document.getElementById('setup-error'); err.style.display='none';
+  try{
+    const clean=fbRaw.replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
+    const json=clean.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*:)/g,'$1"$2"$3').replace(/:\s*'([^']*)'/g,': "$1"');
+    const cfg=JSON.parse(json);
+    localStorage.setItem(FB_KEY,JSON.stringify(cfg));
+    if(aiKey){anthropicKey=aiKey;localStorage.setItem(AI_KEY,aiKey);}
     initDB(cfg);
-  } catch(e) { err.style.display = 'block'; }
+  }catch(e){err.style.display='block';}
 };
 
-function initDB(cfg) {
-  try {
-    const app = initializeApp(cfg);
-    db = getFirestore(app);
-    document.getElementById('setup-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
+function initDB(cfg){
+  try{
+    const app=initializeApp(cfg); db=getFirestore(app);
+    document.getElementById('setup-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
     setSyncStatus('syncing','Connecting…');
-    subscribeAll();
-    loadChatHistory();
-    requestNotifPermission();
-  } catch(e) { document.getElementById('setup-error').style.display = 'block'; }
+    subscribeAll(); loadChatHistory(); checkGCalToken();
+  }catch(e){document.getElementById('setup-error').style.display='block';}
 }
 
-function setSyncStatus(s,l) {
+function setSyncStatus(s,l){
   document.getElementById('sync-dot').className='sync-dot '+s;
   document.getElementById('sync-label').textContent=l;
 }
 
-function subscribeAll() {
+function subscribeAll(){
   unsubscribers.forEach(u=>u()); unsubscribers=[];
-  ['songs','releases','events'].forEach(col => {
-    const unsub = onSnapshot(collection(db,col), snap => {
-      data[col] = snap.docs.map(d=>({id:d.id,...d.data()}));
-      if (col==='songs') data.songs.sort((a,b)=>(a.order||0)-(b.order||0));
-      if (col==='events') scheduleReminders();
+  ['songs','releases','events'].forEach(col=>{
+    const unsub=onSnapshot(collection(db,col),snap=>{
+      data[col]=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(col==='songs')data.songs.sort((a,b)=>(a.order||0)-(b.order||0));
       render(); setSyncStatus('synced','Synced');
-    }, ()=>setSyncStatus('error','Sync error'));
+    },()=>setSyncStatus('error','Sync error'));
     unsubscribers.push(unsub);
   });
 }
 
-async function saveDoc(col,item) {
+async function saveDoc(col,item){
   setSyncStatus('syncing','Saving…');
-  const {id,...rest}=item;
-  await setDoc(doc(db,col,id),rest);
+  const{id,...rest}=item; await setDoc(doc(db,col,id),rest);
 }
-async function removeDoc(col,id) {
-  setSyncStatus('syncing','Saving…');
-  await deleteDoc(doc(db,col,id));
+async function removeDoc(col,id){
+  setSyncStatus('syncing','Saving…'); await deleteDoc(doc(db,col,id));
 }
-function genId() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-// ── NOTIFICATIONS ────────────────────────────────────────────────
-async function requestNotifPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'granted') { notifPermission = true; return; }
-  if (Notification.permission !== 'denied') {
-    const p = await Notification.requestPermission();
-    notifPermission = p === 'granted';
-  }
-}
-
-let reminderTimers = [];
-function scheduleReminders() {
-  reminderTimers.forEach(t => clearTimeout(t));
-  reminderTimers = [];
-  if (!notifPermission) return;
-  const now = Date.now();
-  data.events.forEach(ev => {
-    if (!ev.date || !ev.time || !ev.reminder) return;
-    const evTime = new Date(`${ev.date}T${ev.time}`).getTime();
-    const reminderMs = evTime - (parseInt(ev.reminder) * 60 * 1000);
-    const diff = reminderMs - now;
-    if (diff > 0 && diff < 7 * 24 * 60 * 60 * 1000) {
-      const t = setTimeout(() => {
-        new Notification(`⏰ ${ev.title}`, {
-          body: `Starting in ${ev.reminder} minutes${ev.notes ? ' — ' + ev.notes : ''}`,
-          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144"%3E%3Crect width="144" height="144" rx="14" fill="%234a5240"/%3E%3Ctext x="72" y="104" text-anchor="middle" font-size="82" fill="%23c8a96e"%3EAS%3C/text%3E%3C/svg%3E'
-        });
-      }, diff);
-      reminderTimers.push(t);
-    }
-  });
-}
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
 // ── GOOGLE CALENDAR ───────────────────────────────────────────────
-const GCAL_CLIENT_ID = localStorage.getItem('arjun_gcal_client_id') || '';
-
-window.connectGoogleCalendar = function() {
-  if (!GCAL_CLIENT_ID) {
-    const id = prompt('Enter your Google OAuth Client ID:\n\n(Get it from console.cloud.google.com → APIs → Credentials → OAuth 2.0 Client ID)');
-    if (!id) return;
-    localStorage.setItem('arjun_gcal_client_id', id);
-    location.reload();
-    return;
+function checkGCalToken(){
+  const hash=window.location.hash;
+  if(hash.includes('access_token')){
+    const params=new URLSearchParams(hash.slice(1));
+    const token=params.get('access_token');
+    if(token){localStorage.setItem('arjun_gcal_token',token);window.location.hash='';}
   }
-  const redirectUri = encodeURIComponent(location.origin + location.pathname);
-  const scope = encodeURIComponent('https://www.googleapis.com/auth/calendar.events');
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GCAL_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&prompt=consent`;
-  window.location.href = url;
+  if(localStorage.getItem('arjun_gcal_token')){
+    const btn=document.getElementById('gcal-btn');
+    btn.innerHTML='✓ Google Calendar connected — reminders will sync';
+    btn.classList.add('connected');
+  }
+}
+
+window.connectGoogleCalendar=function(){
+  const clientId=localStorage.getItem('arjun_gcal_client_id');
+  if(!clientId){
+    const id=prompt('Paste your Google OAuth Client ID:\n\nconsole.cloud.google.com → APIs & Services → Credentials → OAuth 2.0 Client ID');
+    if(!id)return;
+    localStorage.setItem('arjun_gcal_client_id',id);
+  }
+  const cid=localStorage.getItem('arjun_gcal_client_id');
+  const redirectUri=encodeURIComponent(location.origin+location.pathname);
+  const scope=encodeURIComponent('https://www.googleapis.com/auth/calendar.events');
+  window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${cid}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&prompt=consent`;
 };
 
-function checkGCalToken() {
-  const hash = window.location.hash;
-  if (hash.includes('access_token')) {
-    const params = new URLSearchParams(hash.slice(1));
-    const token = params.get('access_token');
-    if (token) {
-      localStorage.setItem('arjun_gcal_token', token);
-      window.location.hash = '';
-      document.getElementById('gcal-btn').textContent = '✓ Google Calendar connected';
-      document.getElementById('gcal-btn').classList.add('connected');
-    }
-  }
-  const saved = localStorage.getItem('arjun_gcal_token');
-  if (saved) {
-    document.getElementById('gcal-btn').innerHTML = '✓ Google Calendar connected';
-    document.getElementById('gcal-btn').classList.add('connected');
-  }
-}
-
-async function pushToGoogleCalendar(ev) {
-  const token = localStorage.getItem('arjun_gcal_token');
-  if (!token || !ev.date) return;
-  const start = ev.time ? `${ev.date}T${ev.time}:00` : ev.date;
-  const isDateTime = !!ev.time;
-  const body = {
-    summary: ev.title,
-    description: ev.notes || '',
-    start: isDateTime ? { dateTime: start, timeZone: 'Pacific/Auckland' } : { date: ev.date },
-    end: isDateTime ? { dateTime: new Date(new Date(start).getTime() + 60 * 60 * 1000).toISOString() } : { date: ev.date },
+async function pushToGCal(ev,dateStr){
+  const token=localStorage.getItem('arjun_gcal_token');
+  if(!token||!dateStr)return;
+  const startStr=ev.startTime?`${dateStr}T${ev.startTime}:00`:dateStr;
+  const endStr=ev.endTime?`${dateStr}T${ev.endTime}:00`:ev.startTime?`${dateStr}T${ev.startTime}:00`:dateStr;
+  const isDateTime=!!ev.startTime;
+  const reminderMins=ev.reminder?parseInt(ev.reminder):null;
+  const body={
+    summary:ev.title,
+    description:ev.notes||'',
+    start:isDateTime?{dateTime:startStr,timeZone:'Pacific/Auckland'}:{date:dateStr},
+    end:isDateTime?{dateTime:endStr,timeZone:'Pacific/Auckland'}:{date:dateStr},
+    reminders:reminderMins?{useDefault:false,overrides:[{method:'popup',minutes:reminderMins}]}:{useDefault:true}
   };
-  try {
-    await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+  try{
+    await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
     });
-  } catch(e) { console.log('GCal push failed', e); }
+  }catch(e){console.log('GCal push failed',e);}
 }
 
-// ── TRACK PROGRESS ────────────────────────────────────────────────
-function getTrackCompletion(song) {
-  const steps = song.steps || {};
-  const done = TRACK_STEPS.filter(s=>steps[s.key]==='done').length;
-  const partial = TRACK_STEPS.filter(s=>steps[s.key]==='partial').length;
-  return { done, partial, total: TRACK_STEPS.length, pct: Math.round(((done + partial * 0.5) / TRACK_STEPS.length) * 100) };
+// ── RECURRENCE EXPANSION ──────────────────────────────────────────
+function getEventDatesForMonth(ev, year, month){
+  const dates=[];
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  if(!ev.recurrence||ev.recurrence==='none'){
+    if(ev.date){
+      const d=new Date(ev.date);
+      if(d.getFullYear()===year&&d.getMonth()===month) dates.push(ev.date);
+    }
+    return dates;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const dateObj=new Date(year,month,d);
+    const dow=dateObj.getDay();
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    // Check recurrence start
+    if(ev.date&&dateStr<ev.date)continue;
+    let match=false;
+    if(ev.recurrence==='daily')match=true;
+    else if(ev.recurrence==='weekdays')match=dow>=1&&dow<=5;
+    else if(ev.recurrence==='weekends')match=dow===0||dow===6;
+    else if(ev.recurrence==='weekly'&&ev.recurDays&&ev.recurDays.length)match=ev.recurDays.includes(dow);
+    if(match)dates.push(dateStr);
+  }
+  return dates;
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────
+function getTrackCompletion(song){
+  const steps=song.steps||{};
+  const done=TRACK_STEPS.filter(s=>steps[s.key]==='done').length;
+  const partial=TRACK_STEPS.filter(s=>steps[s.key]==='partial').length;
+  return{done,partial,total:TRACK_STEPS.length,pct:Math.round(((done+partial*0.5)/TRACK_STEPS.length)*100)};
+}
 function contentTypeBadge(t){return{Reel:'b-reel','YouTube video':'b-video',Story:'b-story',Post:'b-post',Teaser:'b-teaser','Behind the scenes':'b-bts'}[t]||'b-idea';}
 function statusBadge(s){return{Idea:'b-idea',Planned:'b-planned','In progress':'b-inprogress',Done:'b-done',Published:'b-published',Released:'b-released'}[s]||'b-idea';}
-
-function overallStatus(song) {
-  if (song.released) return '<span class="status-pill sp-completed">✓ Released</span>';
-  if (song.unreleased) return '<span class="status-pill sp-completed">✓ Done</span>';
-  if (song.active) return '<span class="status-pill sp-active">● Active</span>';
-  return '<span class="status-pill sp-paused">— On hold</span>';
+function overallStatus(song){
+  if(song.released)return'<span class="status-pill sp-completed">✓ Released</span>';
+  if(song.unreleased)return'<span class="status-pill sp-completed">✓ Done</span>';
+  if(song.active)return'<span class="status-pill sp-active">● Active</span>';
+  return'<span class="status-pill sp-paused">— On hold</span>';
+}
+function formatTime(t){
+  if(!t)return'';
+  const[h,m]=t.split(':'),hr=parseInt(h);
+  return`${hr>12?hr-12:hr===0?12:hr}:${m}${hr>=12?'pm':'am'}`;
 }
 
-// ── RENDER SONGS ──────────────────────────────────────────────────
-function renderSongs() {
-  const el = document.getElementById('songs-list');
-  if (!data.songs.length) { el.innerHTML='<div class="empty">🎵 No songs yet.</div>'; return; }
-  const activeCount = data.songs.filter(s=>s.active&&!s.released&&!s.unreleased).length;
-  el.innerHTML = data.songs.map(song => {
-    const isOpen = !!expandedSongs[song.id];
-    const comp = getTrackCompletion(song);
-    const steps = song.steps||{};
-    const content = song.content||[];
-    const stepBars = TRACK_STEPS.map(s=>`<div class="track-step ${steps[s.key]==='done'?'done':steps[s.key]==='partial'?'partial':''}" title="${s.label}"></div>`).join('');
-    const checkItems = TRACK_STEPS.map(s=>{
-      const status=steps[s.key]||'todo';
-      const note=(song.stepNotes||{})[s.key]||'';
-      return `<div class="check-item">
-        <div class="check-right">
-          <div class="check-name">${s.label}</div>
-          <div class="check-status-btns">
-            <button class="csbtn ${status==='todo'?'active-todo':''}" onclick="setStep('${song.id}','${s.key}','todo')">To do</button>
-            <button class="csbtn ${status==='partial'?'active-partial':''}" onclick="setStep('${song.id}','${s.key}','partial')">In progress</button>
-            <button class="csbtn ${status==='done'?'active-done':''}" onclick="setStep('${song.id}','${s.key}','done')">Done</button>
-          </div>
-          <input class="check-note-input" placeholder="Add note..." value="${note.replace(/"/g,'&quot;')}" onchange="setStepNote('${song.id}','${s.key}',this.value)">
+function renderSongs(){
+  const el=document.getElementById('songs-list');
+  if(!data.songs.length){el.innerHTML='<div class="empty">🎵 No songs yet.</div>';return;}
+  const activeCount=data.songs.filter(s=>s.active&&!s.released&&!s.unreleased).length;
+  el.innerHTML=data.songs.map(song=>{
+    const isOpen=!!expandedSongs[song.id];
+    const comp=getTrackCompletion(song);
+    const steps=song.steps||{}, content=song.content||[];
+    const stepBars=TRACK_STEPS.map(s=>`<div class="track-step ${steps[s.key]==='done'?'done':steps[s.key]==='partial'?'partial':''}" title="${s.label}"></div>`).join('');
+    const checkItems=TRACK_STEPS.map(s=>{
+      const status=steps[s.key]||'todo', note=(song.stepNotes||{})[s.key]||'';
+      return`<div class="check-item"><div class="check-right">
+        <div class="check-name">${s.label}</div>
+        <div class="check-status-btns">
+          <button class="csbtn ${status==='todo'?'active-todo':''}" onclick="setStep('${song.id}','${s.key}','todo')">To do</button>
+          <button class="csbtn ${status==='partial'?'active-partial':''}" onclick="setStep('${song.id}','${s.key}','partial')">In progress</button>
+          <button class="csbtn ${status==='done'?'active-done':''}" onclick="setStep('${song.id}','${s.key}','done')">Done</button>
         </div>
-      </div>`;
+        <input class="check-note-input" placeholder="Add note..." value="${note.replace(/"/g,'&quot;')}" onchange="setStepNote('${song.id}','${s.key}',this.value)">
+      </div></div>`;
     }).join('');
-    const contentRows = content.length ? content.map((c,ci)=>`
+    const contentRows=content.length?content.map((c,ci)=>`
       <div class="content-item">
         <div style="font-size:13px">${c.idea}</div>
         <span class="badge ${contentTypeBadge(c.type)}">${c.type}</span>
         <span class="badge ${statusBadge(c.status)}">${c.status}</span>
         <button class="icon-btn" onclick="deleteContent('${song.id}',${ci})">🗑</button>
-      </div>`).join('') : '<div class="empty-content">No content yet.</div>';
-    return `<div class="song-card ${song.active&&!song.released&&!song.unreleased?'active-song':''}">
+      </div>`).join(''):'<div class="empty-content">No content yet.</div>';
+    return`<div class="song-card ${song.active&&!song.released&&!song.unreleased?'active-song':''}">
       <div class="song-top" onclick="toggleExpand('${song.id}')">
         <div class="${song.active&&!song.released&&!song.unreleased?'active-ind':'inactive-ind'}"></div>
         <div style="min-width:0;flex:1;">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="song-name">${song.name}</div>${overallStatus(song)}
           </div>
-          ${song.bpm||song.scale?`<div style="font-size:10px;color:var(--text3);margin-top:2px;">${song.bpm?'BPM: '+song.bpm:''}${song.bpm&&song.scale?' · ':''}${song.scale?'Key: '+song.scale:''}</div>`:''}
+          ${song.bpm||song.scale?`<div style="font-size:11px;color:var(--text2);margin-top:3px;display:flex;gap:10px;">${song.bpm?'<span>🎵 <span style=\'color:var(--text3)\'>BPM</span> '+song.bpm+'</span>':''} ${song.scale?'<span>🎼 <span style=\'color:var(--text3)\'>Key</span> '+song.scale+'</span>':''}</div>`:''}
           <div class="track-steps">${stepBars}</div>
           <div class="track-pct">${comp.pct}% · ${comp.done}/${comp.total} steps · ${content.length} content</div>
         </div>
@@ -642,8 +596,7 @@ function renderSongs() {
           <div class="checklist-grid">${checkItems}</div>
         </div>
         <div class="expand-section">
-          <div class="expand-label">Content</div>
-          ${contentRows}
+          <div class="expand-label">Content</div>${contentRows}
           <button class="add-content-btn" onclick="openContentModal('${song.id}')">+ Add content</button>
         </div>
       </div>
@@ -651,31 +604,34 @@ function renderSongs() {
   }).join('');
 }
 
-// ── RENDER CALENDAR ───────────────────────────────────────────────
-function renderCalendar() {
+function renderCalendar(){
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-title').textContent=`${months[calMonth]} ${calYear}`;
   const firstDay=new Date(calYear,calMonth,1).getDay();
   const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
   const todayStr=new Date().toISOString().slice(0,10);
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let html=days.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
-  for(let i=0;i<firstDay;i++) html+=`<div class="cal-cell other-month"></div>`;
+  let html=DAY_NAMES.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-cell other-month"></div>`;
+  // Build event map for the month
+  const eventMap={};
+  data.events.forEach(ev=>{
+    getEventDatesForMonth(ev,calYear,calMonth).forEach(dateStr=>{
+      if(!eventMap[dateStr])eventMap[dateStr]=[];
+      eventMap[dateStr].push(ev);
+    });
+  });
   for(let d=1;d<=daysInMonth;d++){
     const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday=dateStr===todayStr;
-    const dayEvents=data.events.filter(e=>e.date===dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-    const evHtml=dayEvents.map(e=>`<div class="cal-event ev-${e.type}" onclick="event.stopPropagation();openEventDetail('${e.id}')" title="${e.title}${e.time?' at '+formatTime(e.time):''}">${e.time?formatTime(e.time)+' ':''} ${e.title}</div>`).join('');
+    const dayEvents=(eventMap[dateStr]||[]).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
+    const evHtml=dayEvents.map(e=>{
+      const timeLabel=e.startTime?formatTime(e.startTime)+' ':'';
+      const recurIcon=e.recurrence&&e.recurrence!=='none'?'↺ ':'';
+      return`<div class="cal-event ev-${e.type}" onclick="event.stopPropagation();openEventDetail('${e.id}','${dateStr}')" title="${e.title}">${recurIcon}${timeLabel}${e.title}</div>`;
+    }).join('');
     html+=`<div class="cal-cell${isToday?' today':''}" onclick="openCalModal('${dateStr}')"><div class="cal-date">${d}</div>${evHtml}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
-}
-
-function formatTime(t) {
-  if (!t) return '';
-  const [h,m] = t.split(':');
-  const hr = parseInt(h);
-  return `${hr>12?hr-12:hr===0?12:hr}:${m}${hr>=12?'pm':'am'}`;
 }
 
 function renderReleases(){
@@ -714,13 +670,11 @@ window.updateMeta=function(id,field,value){
 };
 window.setStep=function(songId,stepKey,status){
   const song=data.songs.find(s=>s.id===songId);if(!song)return;
-  const steps={...(song.steps||{}),[stepKey]:status};
-  saveDoc('songs',{...song,steps});
+  saveDoc('songs',{...song,steps:{...(song.steps||{}),[stepKey]:status}});
 };
 window.setStepNote=function(songId,stepKey,note){
   const song=data.songs.find(s=>s.id===songId);if(!song)return;
-  const stepNotes={...(song.stepNotes||{}),[stepKey]:note};
-  saveDoc('songs',{...song,stepNotes});
+  saveDoc('songs',{...song,stepNotes:{...(song.stepNotes||{}),[stepKey]:note}});
 };
 window.deleteSong=id=>{if(confirm('Delete this song?'))removeDoc('songs',id);};
 window.deleteContent=function(songId,ci){
@@ -731,23 +685,38 @@ window.deleteContent=function(songId,ci){
 window.removeDoc=removeDoc;
 window.calNav=function(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();};
 
-// ── EVENT DETAIL POPUP ────────────────────────────────────────────
-window.openEventDetail=function(id){
+// ── DAY PICKER ────────────────────────────────────────────────────
+window.toggleDay=function(dow){
+  const idx=selectedDays.indexOf(dow);
+  if(idx>-1)selectedDays.splice(idx,1);else selectedDays.push(dow);
+  document.querySelectorAll('.day-chip').forEach(c=>{
+    c.classList.toggle('selected',selectedDays.includes(parseInt(c.dataset.dow)));
+  });
+};
+
+// ── RECURRENCE TOGGLE ─────────────────────────────────────────────
+window.toggleRecurrence=function(val){
+  const dp=document.getElementById('day-picker-wrap');
+  if(dp)dp.style.display=val==='weekly'?'block':'none';
+};
+
+// ── EVENT DETAIL ──────────────────────────────────────────────────
+window.openEventDetail=function(id, dateStr){
   editingEventId=id;
   const ev=data.events.find(e=>e.id===id);if(!ev)return;
   const box=document.getElementById('modal-box');
-  const typeColors={'content':'coral','recording':'amber','mixing':'green','release':'accent2','writing':'blue','promo':'purple'};
+  const recurLabel={none:'One-off',daily:'Daily',weekdays:'Weekdays',weekends:'Weekends',weekly:'Custom days'}[ev.recurrence||'none']||'One-off';
   box.innerHTML=`<div class="modal-title">📅 ${ev.title}</div>
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
       <span class="badge ev-${ev.type}" style="font-size:11px;padding:3px 10px;">${ev.type}</span>
-      ${ev.date?`<span style="font-size:12px;color:var(--text2);">📆 ${ev.date}</span>`:''}
-      ${ev.time?`<span style="font-size:12px;color:var(--text2);">🕐 ${formatTime(ev.time)}</span>`:''}
+      ${ev.startTime?`<span style="font-size:12px;color:var(--text2);">🕐 ${formatTime(ev.startTime)}${ev.endTime?' – '+formatTime(ev.endTime):''}</span>`:''}
+      ${ev.recurrence&&ev.recurrence!=='none'?`<span style="font-size:12px;color:var(--text2);">↺ ${recurLabel}</span>`:''}
       ${ev.reminder?`<span style="font-size:12px;color:var(--text2);">⏰ ${ev.reminder}min reminder</span>`:''}
     </div>
     <div class="field"><label>Title</label><input type="text" id="ed-title" value="${ev.title.replace(/"/g,'&quot;')}"></div>
     <div class="modal-row">
-      <div class="field"><label>Date</label><input type="date" id="ed-date" value="${ev.date||''}"></div>
-      <div class="field"><label>Time</label><input type="time" id="ed-time" value="${ev.time||''}"></div>
+      <div class="field"><label>Start time</label><input type="time" id="ed-start" value="${ev.startTime||''}"></div>
+      <div class="field"><label>End time</label><input type="time" id="ed-end" value="${ev.endTime||''}"></div>
     </div>
     <div class="modal-row">
       <div class="field"><label>Type</label><select id="ed-type">
@@ -758,39 +727,38 @@ window.openEventDetail=function(id){
         <option value="release" ${ev.type==='release'?'selected':''}>Release</option>
         <option value="promo" ${ev.type==='promo'?'selected':''}>Promo</option>
       </select></div>
-      <div class="field"><label>Reminder (mins before)</label><select id="ed-reminder">
+      <div class="field"><label>Reminder</label><select id="ed-reminder">
         <option value="" ${!ev.reminder?'selected':''}>No reminder</option>
-        <option value="10" ${ev.reminder==='10'?'selected':''}>10 minutes</option>
-        <option value="30" ${ev.reminder==='30'?'selected':''}>30 minutes</option>
+        <option value="10" ${ev.reminder==='10'?'selected':''}>10 min</option>
+        <option value="30" ${ev.reminder==='30'?'selected':''}>30 min</option>
         <option value="60" ${ev.reminder==='60'?'selected':''}>1 hour</option>
         <option value="120" ${ev.reminder==='120'?'selected':''}>2 hours</option>
         <option value="1440" ${ev.reminder==='1440'?'selected':''}>1 day</option>
       </select></div>
     </div>
-    <div class="field"><label>Notes</label><textarea id="ed-notes" rows="3" placeholder="Add notes about this session...">${ev.notes||''}</textarea></div>
+    <div class="field"><label>Notes</label><textarea id="ed-notes" rows="3">${ev.notes||''}</textarea></div>
     <div class="modal-actions">
       <button class="btn-delete" onclick="deleteEvent('${ev.id}')">🗑 Delete</button>
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveEventEdit()">Save changes</button>
+      <button class="btn-save" onclick="saveEventEdit('${dateStr}')">Save</button>
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
 };
 
-window.deleteEvent=function(id){
-  removeDoc('events',id);closeModal();renderCalendar();
-};
+window.deleteEvent=function(id){removeDoc('events',id);closeModal();renderCalendar();};
 
-window.saveEventEdit=function(){
+window.saveEventEdit=async function(dateStr){
   const ev=data.events.find(e=>e.id===editingEventId);if(!ev)return;
   const updated={...ev,
     title:document.getElementById('ed-title').value.trim(),
-    date:document.getElementById('ed-date').value,
-    time:document.getElementById('ed-time').value,
+    startTime:document.getElementById('ed-start').value,
+    endTime:document.getElementById('ed-end').value,
     type:document.getElementById('ed-type').value,
     reminder:document.getElementById('ed-reminder').value,
     notes:document.getElementById('ed-notes').value.trim()
   };
-  saveDoc('events',updated);
+  await saveDoc('events',updated);
+  await pushToGCal(updated, dateStr);
   closeModal();renderCalendar();
 };
 
@@ -841,16 +809,18 @@ window.openModal=function(type){
 };
 
 window.openCalModal=function(dateStr){
+  selectedDays=[];
   const box=document.getElementById('modal-box');
+  const dayChips=DAY_NAMES.map((d,i)=>`<button class="day-chip" data-dow="${i}" onclick="toggleDay(${i})">${d}</button>`).join('');
   box.innerHTML=`<div class="modal-title">Add event — ${dateStr}</div>
     <div class="field"><label>Title</label><input type="text" id="m-title" placeholder="e.g. Record vocals for Dil Wala"></div>
     <div class="modal-row">
-      <div class="field"><label>Date</label><input type="date" id="m-date" value="${dateStr}"></div>
-      <div class="field"><label>Time</label><input type="time" id="m-time"></div>
+      <div class="field"><label>Start time</label><input type="time" id="m-start"></div>
+      <div class="field"><label>End time</label><input type="time" id="m-end"></div>
     </div>
     <div class="modal-row">
       <div class="field"><label>Type</label><select id="m-type">
-        <option value="content">Content creation</option>
+        <option value="content">Content</option>
         <option value="recording">Recording</option>
         <option value="writing">Writing</option>
         <option value="mixing">Mixing</option>
@@ -859,14 +829,27 @@ window.openCalModal=function(dateStr){
       </select></div>
       <div class="field"><label>Reminder</label><select id="m-reminder">
         <option value="">No reminder</option>
-        <option value="10">10 minutes before</option>
-        <option value="30">30 minutes before</option>
+        <option value="10">10 min before</option>
+        <option value="30">30 min before</option>
         <option value="60">1 hour before</option>
         <option value="120">2 hours before</option>
         <option value="1440">1 day before</option>
       </select></div>
     </div>
-    <div class="field"><label>Notes</label><textarea id="m-notes" rows="3" placeholder="What's the plan for this session?"></textarea></div>
+    <div class="field"><label>Recurrence</label>
+      <select id="m-recurrence" onchange="toggleRecurrence(this.value)">
+        <option value="none">One-off event</option>
+        <option value="daily">Every day</option>
+        <option value="weekdays">Every weekday (Mon–Fri)</option>
+        <option value="weekends">Every weekend (Sat–Sun)</option>
+        <option value="weekly">Custom days of the week</option>
+      </select>
+    </div>
+    <div id="day-picker-wrap" style="display:none;" class="field">
+      <label>Select days</label>
+      <div class="day-picker">${dayChips}</div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="m-notes" rows="2" placeholder="What's the plan for this session?"></textarea></div>
     <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="saveCalEvent('${dateStr}')">Add</button></div>`;
   document.getElementById('modal-overlay').classList.add('open');
 };
@@ -885,7 +868,7 @@ window.openContentModal=function(songId){
   document.getElementById('modal-overlay').classList.add('open');
 };
 
-window.closeModal=()=>{document.getElementById('modal-overlay').classList.remove('open');pendingContentIdx=null;editingEventId=null;};
+window.closeModal=()=>{document.getElementById('modal-overlay').classList.remove('open');pendingContentIdx=null;editingEventId=null;selectedDays=[];};
 
 window.saveSong=function(){
   const name=document.getElementById('m-name').value.trim();if(!name)return;
@@ -905,96 +888,84 @@ window.saveRelease=function(){
   const song=document.getElementById('m-song').value;if(!song)return;
   saveDoc('releases',{id:genId(),song,date:document.getElementById('m-date').value,platform:document.getElementById('m-platform').value,status:document.getElementById('m-status').value});closeModal();
 };
+
 window.saveCalEvent=async function(dateStr){
   const title=document.getElementById('m-title').value.trim();if(!title)return;
-  const ev={id:genId(),date:document.getElementById('m-date').value||dateStr,time:document.getElementById('m-time').value,title,type:document.getElementById('m-type').value,reminder:document.getElementById('m-reminder').value,notes:document.getElementById('m-notes').value.trim()};
+  const recurrence=document.getElementById('m-recurrence').value;
+  const ev={
+    id:genId(),date:dateStr,
+    startTime:document.getElementById('m-start').value,
+    endTime:document.getElementById('m-end').value,
+    title,type:document.getElementById('m-type').value,
+    reminder:document.getElementById('m-reminder').value,
+    recurrence,
+    recurDays:recurrence==='weekly'?[...selectedDays]:[],
+    notes:document.getElementById('m-notes').value.trim()
+  };
   await saveDoc('events',ev);
-  await pushToGoogleCalendar(ev);
+  // Push to GCal — for recurring events, push the first occurrence
+  await pushToGCal(ev,dateStr);
   closeModal();renderCalendar();
 };
 
 document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))closeModal();});
 
-// ── AI CHAT WITH PERSISTENT HISTORY ──────────────────────────────
-const TRACK_STEPS_REF = TRACK_STEPS;
-
-function loadChatHistory() {
-  try {
-    const saved = localStorage.getItem(CHAT_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      data.chatHistory = parsed.messages || [];
-      renderChatHistory(parsed.displayMessages || []);
-    } else {
-      appendMessage('ai', `Hey Arjun! 👋 I'm your AI music assistant. I know your full dashboard and can update it for you.\n\nTry:\n• "Add a song called Dil Wala, recording stage"\n• "What should I focus on this week?"\n• "What's trending in Punjabi music?"\n• "Schedule a recording session next Friday"`);
+// ── AI CHAT ───────────────────────────────────────────────────────
+function loadChatHistory(){
+  try{
+    const saved=localStorage.getItem(CHAT_KEY);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      chatHistory=parsed.messages||[];
+      displayMessages=parsed.display||[];
+      const el=document.getElementById('chat-messages');
+      el.innerHTML=displayMessages.map(m=>`<div class="chat-msg ${m.role}"><div class="chat-bubble">${m.text}</div></div>`).join('');
+      el.scrollTop=el.scrollHeight;
+      if(displayMessages.length)document.getElementById('chat-suggestions').style.display='none';
+    }else{
+      appendMsg('ai','Hey Arjun! 👋 I\'m your AI music assistant. I know your full dashboard and can update it for you.\n\nTry:\n• "Add a song called Dil Wala, recording stage"\n• "What should I focus on this week?"\n• "What\'s trending in Punjabi music?"\n• "Schedule a recording session next Tuesday 10am"');
     }
-  } catch(e) { data.chatHistory = []; }
+  }catch(e){chatHistory=[];}
 }
 
-function saveChatHistory(displayMessages) {
-  try {
-    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({
-      messages: data.chatHistory.slice(-40),
-      displayMessages: displayMessages.slice(-30)
-    }));
-  } catch(e) {}
-}
-
-let displayMessages = [];
-
-function renderChatHistory(msgs) {
-  displayMessages = msgs;
-  const el = document.getElementById('chat-messages');
-  el.innerHTML = '';
-  msgs.forEach(m => {
-    const id = 'msg-'+Math.random();
-    el.innerHTML += `<div class="chat-msg ${m.role}" id="${id}"><div class="chat-bubble">${m.text}</div></div>`;
-  });
-  el.scrollTop = el.scrollHeight;
-  if (msgs.length > 0) document.getElementById('chat-suggestions').style.display = 'none';
+function saveChatHistory(){
+  try{localStorage.setItem(CHAT_KEY,JSON.stringify({messages:chatHistory.slice(-40),display:displayMessages.slice(-30)}));}catch(e){}
 }
 
 function getDashboardContext(){
-  return `You are an AI assistant built into Arjun Shoor's personal artist dashboard. Arjun is a 30-year-old Punjabi singer-songwriter based in Auckland, New Zealand. He works full-time as a network assistant at a telco and is building his music career on the side. He has 13,000+ monthly Spotify listeners. Top songs: Sukoon (130K+ streams), Far Away (98K+ streams). Goal: become a full-time musician.
+  return `You are an AI assistant in Arjun Shoor's artist dashboard. Arjun is a 30-year-old Punjabi singer-songwriter in Auckland, NZ. Full-time IT job (network assistant at telco), building music career on the side. 13K+ Spotify monthly listeners. Top songs: Sukoon (130K streams), Far Away (98K streams). Goal: full-time musician.
 
-CURRENT DASHBOARD DATA:
-Songs (${data.songs.length} total, ${data.songs.filter(s=>s.active&&!s.released&&!s.unreleased).length} active):
-${data.songs.map(s=>{
-  const comp=getTrackCompletion(s);
-  const steps=s.steps||{};
-  const stepStr=TRACK_STEPS_REF.map(t=>`${t.label}:${steps[t.key]||'todo'}`).join(', ');
-  return `- "${s.name}" | ${s.released?'RELEASED':s.unreleased?'DONE-UNRELEASED':s.active?'ACTIVE':'ON HOLD'} | BPM:${s.bpm||'?'} Key:${s.scale||'?'} | ${comp.pct}% complete | ${stepStr}`;
-}).join('\n')||'No songs yet'}
+SONGS (${data.songs.length} total):
+${data.songs.map(s=>{const c=getTrackCompletion(s);const st=s.steps||{};return`- "${s.name}" | ${s.released?'RELEASED':s.unreleased?'DONE':s.active?'ACTIVE':'ON HOLD'} | ${c.pct}% | BPM:${s.bpm||'?'} Key:${s.scale||'?'} | Steps: ${TRACK_STEPS.map(t=>`${t.label}:${st[t.key]||'todo'}`).join(', ')}`;}).join('\n')||'None'}
 
-Releases: ${data.releases.map(r=>`"${r.song}" on ${r.date||'TBD'} via ${r.platform} (${r.status})`).join(', ')||'None planned'}
+RELEASES: ${data.releases.map(r=>`"${r.song}" ${r.date||'TBD'} ${r.platform} (${r.status})`).join(', ')||'None'}
 
-You can update the dashboard using ACTION blocks at the END of your message:
-[ACTION]{"type":"add_song","name":"Song Name","bpm":"96","scale":"D minor","priority":"High","active":false}[/ACTION]
-[ACTION]{"type":"add_content","song":"Song Name","idea":"Content idea","contentType":"Reel","status":"Idea"}[/ACTION]
-[ACTION]{"type":"add_release","song":"Song Name","date":"2025-08-01","platform":"All platforms","status":"Planned"}[/ACTION]
-[ACTION]{"type":"add_event","date":"2025-07-15","time":"10:00","title":"Event title","eventType":"recording","reminder":"30","notes":"Session notes"}[/ACTION]
-[ACTION]{"type":"update_step","song":"Song Name","step":"beat","status":"done"}[/ACTION]
-[ACTION]{"type":"update_song_status","song":"Song Name","status":"released"}[/ACTION]
+To update dashboard, add ACTION blocks at END of message:
+[ACTION]{"type":"add_song","name":"Name","bpm":"96","scale":"D minor","priority":"High","active":false}[/ACTION]
+[ACTION]{"type":"add_content","song":"Name","idea":"Idea","contentType":"Reel","status":"Idea"}[/ACTION]
+[ACTION]{"type":"add_release","song":"Name","date":"2025-08-01","platform":"All platforms","status":"Planned"}[/ACTION]
+[ACTION]{"type":"add_event","date":"2025-07-15","startTime":"10:00","endTime":"12:00","title":"Title","eventType":"recording","reminder":"30","recurrence":"none","notes":"Notes"}[/ACTION]
+[ACTION]{"type":"update_step","song":"Name","step":"beat","status":"done"}[/ACTION]
+[ACTION]{"type":"update_song_status","song":"Name","status":"released"}[/ACTION]
 
-Only include ACTION blocks when explicitly asked. Be conversational, warm, concise for mobile.`;
+Only include ACTION blocks when explicitly asked. Be warm, concise, mobile-friendly.`;
 }
 
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const msg=input.value.trim();if(!msg)return;
-  if(!anthropicKey){appendMsg('ai','⚠️ No API key. Re-open setup and add your Anthropic key.');return;}
-  input.value='';input.style.height='42px';
+  if(!anthropicKey){appendMsg('ai','⚠️ No API key set. Re-open setup and add your Anthropic key.');return;}
+  input.value='';input.style.height='44px';
   document.getElementById('chat-suggestions').style.display='none';
   appendMsg('user',msg);
-  const sendBtn=document.getElementById('chat-send');
-  sendBtn.disabled=true;
+  const sendBtn=document.getElementById('chat-send');sendBtn.disabled=true;
   const thinkingId=appendMsg('ai','Thinking…',true);
-  data.chatHistory.push({role:'user',content:msg});
+  chatHistory.push({role:'user',content:msg});
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':anthropicKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:getDashboardContext(),tools:[{type:'web_search_20250305',name:'web_search'}],messages:data.chatHistory.slice(-20)})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:getDashboardContext(),tools:[{type:'web_search_20250305',name:'web_search'}],messages:chatHistory.slice(-20)})
     });
     const result=await res.json();
     if(result.error){updateMsg(thinkingId,'Error: '+result.error.message);sendBtn.disabled=false;return;}
@@ -1004,9 +975,9 @@ async function sendChat(){
     while((match=actionRegex.exec(fullText))!==null){try{actions.push(JSON.parse(match[1]));}catch(e){}}
     const cleanText=fullText.replace(/\[ACTION\].*?\[\/ACTION\]/gs,'').trim();
     updateMsg(thinkingId,cleanText,actions.length>0);
-    data.chatHistory.push({role:'assistant',content:result.content});
-    saveChatHistory(displayMessages);
-    for(const action of actions) await executeAction(action);
+    chatHistory.push({role:'assistant',content:result.content});
+    saveChatHistory();
+    for(const action of actions)await executeAction(action);
     if(actions.length>0)render();
   }catch(e){updateMsg(thinkingId,'Sorry, something went wrong. Check your connection.');}
   sendBtn.disabled=false;
@@ -1016,18 +987,18 @@ async function executeAction(action){
   if(action.type==='add_song'){
     const active=data.songs.filter(s=>s.active&&!s.released&&!s.unreleased).length;
     await saveDoc('songs',{id:genId(),name:action.name,bpm:action.bpm||'',scale:action.scale||'',priority:action.priority||'Medium',active:!!action.active&&active<3,released:false,unreleased:false,content:[],steps:{},stepNotes:{},order:Date.now()});
-  } else if(action.type==='add_content'){
+  }else if(action.type==='add_content'){
     const song=data.songs.find(s=>s.name.toLowerCase().includes(action.song.toLowerCase()));
     if(song){const content=[...(song.content||[]),{idea:action.idea,type:action.contentType||'Reel',status:action.status||'Idea'}];await saveDoc('songs',{...song,content});}
-  } else if(action.type==='add_release'){
+  }else if(action.type==='add_release'){
     await saveDoc('releases',{id:genId(),song:action.song,date:action.date||'',platform:action.platform||'All platforms',status:action.status||'Planned'});
-  } else if(action.type==='add_event'){
-    const ev={id:genId(),date:action.date,time:action.time||'',title:action.title,type:action.eventType||'content',reminder:action.reminder||'',notes:action.notes||''};
-    await saveDoc('events',ev);await pushToGoogleCalendar(ev);
-  } else if(action.type==='update_step'){
+  }else if(action.type==='add_event'){
+    const ev={id:genId(),date:action.date,startTime:action.startTime||'',endTime:action.endTime||'',title:action.title,type:action.eventType||'content',reminder:action.reminder||'',recurrence:action.recurrence||'none',recurDays:[],notes:action.notes||''};
+    await saveDoc('events',ev);await pushToGCal(ev,action.date);
+  }else if(action.type==='update_step'){
     const song=data.songs.find(s=>s.name.toLowerCase().includes(action.song.toLowerCase()));
-    if(song){const steps={...(song.steps||{}),[action.step]:action.status};await saveDoc('songs',{...song,steps});}
-  } else if(action.type==='update_song_status'){
+    if(song){await saveDoc('songs',{...song,steps:{...(song.steps||{}),[action.step]:action.status}});}
+  }else if(action.type==='update_song_status'){
     const song=data.songs.find(s=>s.name.toLowerCase().includes(action.song.toLowerCase()));
     if(song){await saveDoc('songs',{...song,active:action.status==='active',released:action.status==='released',unreleased:action.status==='unreleased'});}
   }
@@ -1036,14 +1007,12 @@ async function executeAction(action){
 function appendMsg(role,text,thinking=false){
   const id='msg-'+Date.now()+Math.random();
   const el=document.getElementById('chat-messages');
-  el.innerHTML+=`<div class="chat-msg ${role}" id="${id}"><div class="chat-bubble${thinking?' thinking':''}">${text.replace(/\n/g,'<br>')}</div></div>`;
+  const html=text.replace(/\n/g,'<br>');
+  el.innerHTML+=`<div class="chat-msg ${role}" id="${id}"><div class="chat-bubble${thinking?' thinking':''}">${html}</div></div>`;
   el.scrollTop=el.scrollHeight;
-  if(!thinking){displayMessages.push({role,text:text.replace(/\n/g,'<br>')});saveChatHistory(displayMessages);}
+  if(!thinking){displayMessages.push({role,text:html});saveChatHistory();}
   return id;
 }
-
-// Keep old name for compatibility
-window.appendMessage = appendMsg;
 
 function updateMsg(id,text,hasActions=false){
   const el=document.getElementById(id);
@@ -1051,27 +1020,24 @@ function updateMsg(id,text,hasActions=false){
     const html=text.replace(/\n/g,'<br>')+(hasActions?'<br><span class="action-tag">✓ Dashboard updated</span>':'');
     el.querySelector('.chat-bubble').innerHTML=html;
     el.querySelector('.chat-bubble').classList.remove('thinking');
-    displayMessages.push({role:'ai',text:html});
-    saveChatHistory(displayMessages);
+    displayMessages.push({role:'ai',text:html});saveChatHistory();
   }
 }
 
 window.clearChat=function(){
   if(!confirm('Clear all chat history?'))return;
-  data.chatHistory=[];displayMessages=[];
-  localStorage.removeItem(CHAT_STORAGE_KEY);
+  chatHistory=[];displayMessages=[];
+  localStorage.removeItem(CHAT_KEY);
   document.getElementById('chat-messages').innerHTML='';
   document.getElementById('chat-suggestions').style.display='flex';
-  appendMsg('ai','Chat cleared! How can I help you?');
+  appendMsg('ai','Chat cleared! How can I help?');
 };
-
 window.sendSuggestion=el=>{document.getElementById('chat-input').value=el.textContent;sendChat();};
 window.handleChatKey=function(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
-  const ta=e.target;ta.style.height='42px';ta.style.height=Math.min(ta.scrollHeight,120)+'px';
+  const ta=e.target;ta.style.height='44px';ta.style.height=Math.min(ta.scrollHeight,120)+'px';
 };
 
-checkGCalToken();
 tryAutoConnect();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
