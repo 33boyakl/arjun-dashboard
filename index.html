@@ -293,15 +293,15 @@ body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-b
 .drive-folder-tabs{display:flex;gap:6px;margin-bottom:14px;}
 .drive-folder-tab{flex:1;padding:8px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text2);cursor:pointer;text-align:center;font-family:var(--font-body);}
 .drive-folder-tab.active{background:rgba(200,169,110,0.1);border-color:rgba(200,169,110,0.4);color:var(--accent);}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-.gallery-item{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;cursor:pointer;background:var(--bg3);border:0.5px solid var(--border);}
+.gallery-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.gallery-item{position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;cursor:pointer;background:var(--bg3);border:0.5px solid var(--border);}
 .gallery-item img,.gallery-item video{width:100%;height:100%;object-fit:cover;display:block;}
 .gallery-item-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.2s;display:flex;align-items:flex-end;padding:6px;}
 .gallery-item:active .gallery-item-overlay{background:rgba(0,0,0,0.4);}
-.gallery-item-badge{position:absolute;top:5px;right:5px;font-size:9px;padding:2px 5px;border-radius:8px;font-weight:500;}
+.gallery-item-badge{position:absolute;top:3px;right:3px;font-size:8px;padding:1px 4px;border-radius:6px;font-weight:500;}
 .gallery-item-posted{background:rgba(74,222,128,0.85);color:#000;}
 .gallery-item-ready{background:rgba(200,169,110,0.85);color:#000;}
-.gallery-item-type{position:absolute;top:5px;left:5px;font-size:14px;}
+.gallery-item-type{position:absolute;top:3px;left:3px;font-size:12px;}
 .gallery-loading{text-align:center;padding:30px;color:var(--text3);font-size:13px;}
 .gallery-empty{text-align:center;padding:30px 20px;color:var(--text3);font-size:13px;background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--r2);}
 .gallery-empty-icon{font-size:32px;margin-bottom:8px;}
@@ -1327,24 +1327,47 @@ function checkDriveToken(){
 }
 
 function handleOAuthReturn(){
-  const hash = window.location.hash;
-  if(!hash.includes('access_token')) return;
-  const params = new URLSearchParams(hash.slice(1));
-  const token = params.get('access_token');
-  const state = params.get('state') || '';
+  // Try both hash and search params (some browsers differ)
+  let raw = window.location.hash || '';
+  // Sometimes token comes after #/ or just after #
+  if(raw.startsWith('#')) raw = raw.slice(1);
+  console.log('[OAuth] raw hash:', raw.slice(0,80));
+  
+  // Also check if it came as a query string (some OAuth flows)
+  const search = window.location.search || '';
+  console.log('[OAuth] search:', search.slice(0,80));
+  
+  let token = null, state = '';
+  
+  if(raw.includes('access_token')){
+    const params = new URLSearchParams(raw);
+    token = params.get('access_token');
+    state = params.get('state') || '';
+  } else if(search.includes('access_token')){
+    const params = new URLSearchParams(search.slice(1));
+    token = params.get('access_token');
+    state = params.get('state') || '';
+  }
+  
+  console.log('[OAuth] token found:', !!token, 'state:', state);
   if(!token) return;
-  // Always save as both — Google returns one token covering all requested scopes
+  
+  // Save token for both services — one token covers all requested scopes
   localStorage.setItem('arjun_gcal_token', token);
   localStorage.setItem(DRIVE_TOKEN_KEY, token);
-  // Clear hash cleanly
+  console.log('[OAuth] tokens saved to localStorage');
+  
+  // Clean URL
   history.replaceState(null, '', window.location.pathname);
-  // Update UI
+  
+  // Update Calendar UI
   const btn = document.getElementById('gcal-btn');
   if(btn){ btn.innerHTML='✓ Google Calendar connected'; btn.classList.add('connected'); }
+  
+  // Update Drive UI
   renderDriveStatusBar();
   if(state === 'drive' || state === 'both'){
-    // Switch to gallery tab and load
-    setTimeout(()=>{ loadGalleryTab(); }, 500);
+    setTimeout(()=>{ loadGalleryTab(); }, 800);
   }
 }
 
