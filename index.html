@@ -284,6 +284,39 @@ body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-b
 .social-btn.partial .sb-label{color:var(--amber);}
 .social-streak-row{display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);}
 .social-streak{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;}
+
+/* GALLERY TAB */
+.gallery-connect{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r2);padding:16px;text-align:center;margin-bottom:14px;}
+.gallery-connect-title{font-family:var(--font-head);font-size:14px;font-weight:600;margin-bottom:6px;}
+.gallery-connect-sub{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;}
+.gallery-connect-btn{background:var(--accent);border:none;color:#000;border-radius:var(--r);padding:9px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-body);}
+.drive-folder-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.drive-folder-tab{flex:1;padding:8px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text2);cursor:pointer;text-align:center;font-family:var(--font-body);}
+.drive-folder-tab.active{background:rgba(200,169,110,0.1);border-color:rgba(200,169,110,0.4);color:var(--accent);}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.gallery-item{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;cursor:pointer;background:var(--bg3);border:0.5px solid var(--border);}
+.gallery-item img,.gallery-item video{width:100%;height:100%;object-fit:cover;display:block;}
+.gallery-item-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.2s;display:flex;align-items:flex-end;padding:6px;}
+.gallery-item:active .gallery-item-overlay{background:rgba(0,0,0,0.4);}
+.gallery-item-badge{position:absolute;top:5px;right:5px;font-size:9px;padding:2px 5px;border-radius:8px;font-weight:500;}
+.gallery-item-posted{background:rgba(74,222,128,0.85);color:#000;}
+.gallery-item-ready{background:rgba(200,169,110,0.85);color:#000;}
+.gallery-item-type{position:absolute;top:5px;left:5px;font-size:14px;}
+.gallery-loading{text-align:center;padding:30px;color:var(--text3);font-size:13px;}
+.gallery-empty{text-align:center;padding:30px 20px;color:var(--text3);font-size:13px;background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--r2);}
+.gallery-empty-icon{font-size:32px;margin-bottom:8px;}
+.drive-status{display:flex;align-items:center;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg2);border-radius:var(--r);margin-bottom:12px;border:0.5px solid var(--border);}
+.drive-status.connected{border-color:rgba(74,222,128,0.3);color:var(--green);}
+.drive-status.disconnected{color:var(--text3);}
+
+/* MEDIA PREVIEW MODAL */
+.media-preview{display:flex;flex-direction:column;gap:12px;}
+.media-preview img,.media-preview video{width:100%;border-radius:var(--r);max-height:50vh;object-fit:contain;background:#000;}
+.media-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.media-action-btn{flex:1;padding:9px;border-radius:var(--r);border:0.5px solid var(--border2);background:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font-body);text-align:center;}
+.media-action-btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:500;}
+.media-action-btn.done{background:rgba(74,222,128,0.1);color:var(--green);border-color:rgba(74,222,128,0.3);}
+.media-meta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -306,6 +339,7 @@ body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-b
       <button class="tab" onclick="switchTab('calendar',this)">📅 Calendar</button>
       <button class="tab" onclick="switchTab('releases',this)">🚀 Releases</button>
       <button class="tab" onclick="switchTab('habits',this)">✅ Habits</button>
+      <button class="tab" onclick="switchTab('gallery',this)">🗂️ Gallery</button>
       <button class="tab" onclick="switchTab('ai',this)">🤖 AI</button>
     </div>
   </div>
@@ -385,6 +419,19 @@ body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-b
         <div id="releases-list"></div>
       </div>
       <button class="add-row-btn" onclick="openModal('release')">+ Add release</button>
+    </div>
+
+
+    <!-- GALLERY -->
+    <div id="tab-gallery" class="section">
+      <div id="drive-status-bar"></div>
+      <div id="gallery-connect-prompt"></div>
+      <div class="drive-folder-tabs" id="drive-folder-tabs" style="display:none;">
+        <button class="drive-folder-tab active" onclick="switchDriveFolder('Reels',this)">🎬 Reels</button>
+        <button class="drive-folder-tab" onclick="switchDriveFolder('Stories',this)">📸 Stories</button>
+        <button class="drive-folder-tab" onclick="switchDriveFolder('Posts',this)">🖼️ Posts</button>
+      </div>
+      <div id="gallery-grid"></div>
     </div>
 
     <!-- HABITS -->
@@ -504,7 +551,7 @@ function initDB(cfg){
     document.getElementById('setup-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     setSyncStatus('syncing','Connecting…');
-    subscribeAll(); loadChatHistory(); checkGCalToken(); loadDailyQuote(); renderSocialLog();
+    subscribeAll(); loadChatHistory(); checkGCalToken(); checkDriveToken(); loadGalleryMeta(); loadDailyQuote(); renderSocialLog();
   }catch(e){document.getElementById('setup-error').style.display='block';}
 }
 
@@ -1029,6 +1076,7 @@ window.switchTab=function(tab,btn){
   sec.style.display=tab==='ai'?'flex':'block';
   sec.classList.add('active');
   if(tab==='calendar')renderCalendar();
+  if(tab==='gallery'){loadGalleryMeta();renderDriveStatusBar();if(getDriveToken())loadGalleryTab();}
 };
 
 // ── MODALS ────────────────────────────────────────────────────────
@@ -1257,6 +1305,218 @@ window.clearChat=function(){if(!confirm('Clear all chat history?'))return;chatHi
 window.sendSuggestion=el=>{document.getElementById('chat-input').value=el.textContent;sendChat();};
 window.handleChatKey=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}const ta=e.target;ta.style.height='44px';ta.style.height=Math.min(ta.scrollHeight,120)+'px';};
 
+
+
+// ── GOOGLE DRIVE GALLERY ──────────────────────────────────────────
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
+const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
+const DRIVE_TOKEN_KEY = 'arjun_drive_token';
+const GALLERY_META_KEY = 'arjun_gallery_meta'; // local tags: posted/ready per file id
+let currentDriveFolder = 'Reels';
+let driveFolderIds = {}; // cache folder IDs
+let galleryMeta = {}; // {fileId: {status:'posted'|'ready'|'none'}}
+
+function loadGalleryMeta(){
+  try{ galleryMeta=JSON.parse(localStorage.getItem(GALLERY_META_KEY)||'{}'); }catch(e){ galleryMeta={}; }
+}
+function saveGalleryMeta(){
+  localStorage.setItem(GALLERY_META_KEY, JSON.stringify(galleryMeta));
+}
+
+function getDriveToken(){
+  return localStorage.getItem(DRIVE_TOKEN_KEY);
+}
+
+function checkDriveToken(){
+  // Check if returning from OAuth with drive token
+  const hash = window.location.hash;
+  if(hash.includes('access_token') && hash.includes('drive')){
+    const params = new URLSearchParams(hash.slice(1));
+    const token = params.get('access_token');
+    if(token){ localStorage.setItem(DRIVE_TOKEN_KEY, token); window.location.hash=''; }
+  }
+  // Also handle combined token (calendar+drive in same auth)
+  if(hash.includes('access_token')){
+    const params = new URLSearchParams(hash.slice(1));
+    const token = params.get('access_token');
+    if(token){
+      // Store as both gcal and drive token if scopes were combined
+      const state = params.get('state')||'';
+      if(state.includes('drive')) localStorage.setItem(DRIVE_TOKEN_KEY, token);
+    }
+  }
+}
+
+window.connectGoogleDrive = function(){
+  const clientId = localStorage.getItem('arjun_gcal_client_id');
+  if(!clientId){
+    const id = prompt('Paste your Google OAuth Client ID:\n\nconsole.cloud.google.com → APIs & Services → Credentials → OAuth 2.0 Client ID\n\n(Same one you used for Google Calendar)');
+    if(!id) return;
+    localStorage.setItem('arjun_gcal_client_id', id);
+  }
+  const cid = localStorage.getItem('arjun_gcal_client_id');
+  const redirectUri = encodeURIComponent(location.origin + location.pathname);
+  // Request both Calendar AND Drive scopes together
+  const scope = encodeURIComponent(GCAL_SCOPE + ' ' + DRIVE_SCOPE);
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${cid}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=drive&prompt=consent`;
+};
+
+function renderDriveStatusBar(){
+  const el = document.getElementById('drive-status-bar');
+  const el2 = document.getElementById('gallery-connect-prompt');
+  const tabs = document.getElementById('drive-folder-tabs');
+  if(!el || !el2) return;
+  const token = getDriveToken();
+  if(token){
+    el.innerHTML = `<div class="drive-status connected">✓ Google Drive connected <button onclick="disconnectDrive()" style="margin-left:auto;background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;">Disconnect</button></div>`;
+    el2.innerHTML = '';
+    if(tabs) tabs.style.display = 'flex';
+  } else {
+    el.innerHTML = '';
+    el2.innerHTML = `<div class="gallery-connect">
+      <div class="gallery-connect-title">📁 Connect Google Drive</div>
+      <div class="gallery-connect-sub">Create an <strong>Arjun Content</strong> folder in your Drive with subfolders:<br><strong>Reels / Stories / Posts</strong><br><br>Upload your best content from laptop or phone, then browse it here.</div>
+      <button class="gallery-connect-btn" onclick="connectGoogleDrive()">Connect Google Drive</button>
+    </div>`;
+    if(tabs) tabs.style.display = 'none';
+  }
+}
+
+window.disconnectDrive = function(){
+  localStorage.removeItem(DRIVE_TOKEN_KEY);
+  driveFolderIds = {};
+  renderDriveStatusBar();
+  document.getElementById('gallery-grid').innerHTML = '';
+};
+
+async function driveGet(url){
+  const token = getDriveToken();
+  if(!token) return null;
+  try{
+    const res = await fetch(url, {headers:{'Authorization': `Bearer ${token}`}});
+    if(res.status === 401){ localStorage.removeItem(DRIVE_TOKEN_KEY); renderDriveStatusBar(); return null; }
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+async function findFolderId(name, parentId=null){
+  let q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  if(parentId) q += ` and '${parentId}' in parents`;
+  const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`;
+  const data = await driveGet(url);
+  if(!data || !data.files || !data.files.length) return null;
+  return data.files[0].id;
+}
+
+async function getFolderFiles(folderId){
+  const q = `'${folderId}' in parents and trashed=false and (mimeType contains 'image/' or mimeType contains 'video/')`;
+  const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name,mimeType,thumbnailLink,webContentLink,webViewLink,modifiedTime,size)&orderBy=modifiedTime desc&pageSize=50`;
+  const data = await driveGet(url);
+  return data ? data.files || [] : [];
+}
+
+window.switchDriveFolder = function(folder, btn){
+  currentDriveFolder = folder;
+  document.querySelectorAll('.drive-folder-tab').forEach(t => t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  loadGalleryTab();
+};
+
+async function loadGalleryTab(){
+  const grid = document.getElementById('gallery-grid');
+  if(!grid) return;
+  const token = getDriveToken();
+  if(!token){ renderDriveStatusBar(); return; }
+
+  grid.innerHTML = '<div class="gallery-loading">Loading your content...</div>';
+
+  // Find Arjun Content folder
+  if(!driveFolderIds.root){
+    driveFolderIds.root = await findFolderId('Arjun Content');
+  }
+  if(!driveFolderIds.root){
+    grid.innerHTML = `<div class="gallery-empty"><div class="gallery-empty-icon">📁</div>Create a folder called <strong>"Arjun Content"</strong> in your Google Drive with subfolders: Reels, Stories, Posts. Then upload your content there and come back.</div>`;
+    return;
+  }
+
+  // Find subfolder
+  const folderKey = currentDriveFolder.toLowerCase();
+  if(!driveFolderIds[folderKey]){
+    driveFolderIds[folderKey] = await findFolderId(currentDriveFolder, driveFolderIds.root);
+  }
+  if(!driveFolderIds[folderKey]){
+    grid.innerHTML = `<div class="gallery-empty"><div class="gallery-empty-icon">📂</div>No <strong>${currentDriveFolder}</strong> folder found inside "Arjun Content".<br><br>Create it in Google Drive and upload your content there.</div>`;
+    return;
+  }
+
+  const files = await getFolderFiles(driveFolderIds[folderKey]);
+  if(!files.length){
+    grid.innerHTML = `<div class="gallery-empty"><div class="gallery-empty-icon">${currentDriveFolder==='Reels'?'🎬':currentDriveFolder==='Stories'?'📸':'🖼️'}</div>No content in your ${currentDriveFolder} folder yet.<br><br>Upload photos and videos from your computer via Google Drive.</div>`;
+    return;
+  }
+
+  grid.innerHTML = files.map(f => {
+    const isVideo = f.mimeType && f.mimeType.startsWith('video/');
+    const meta = galleryMeta[f.id] || {};
+    const status = meta.status || 'none';
+    const badgeHtml = status==='posted' ? '<div class="gallery-item-badge gallery-item-posted">✓ Posted</div>' : status==='ready' ? '<div class="gallery-item-badge gallery-item-ready">Ready</div>' : '';
+    const thumbUrl = f.thumbnailLink ? f.thumbnailLink.replace('s220','s400') : '';
+    const imgHtml = thumbUrl ? `<img src="${thumbUrl}" loading="lazy" alt="${f.name}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;">${isVideo?'🎬':'🖼️'}</div>`;
+    return `<div class="gallery-item" onclick="openMediaPreview('${f.id}','${encodeURIComponent(f.name)}','${encodeURIComponent(f.mimeType||'')}','${encodeURIComponent(thumbUrl)}','${encodeURIComponent(f.webViewLink||'')}','${status}')">
+      ${imgHtml}
+      <div class="gallery-item-overlay"></div>
+      ${isVideo ? '<div class="gallery-item-type">▶</div>' : ''}
+      ${badgeHtml}
+    </div>`;
+  }).join('');
+}
+
+window.openMediaPreview = function(fileId, nameEnc, mimeEnc, thumbEnc, viewLinkEnc, status){
+  const name = decodeURIComponent(nameEnc);
+  const mime = decodeURIComponent(mimeEnc);
+  const thumb = decodeURIComponent(thumbEnc);
+  const viewLink = decodeURIComponent(viewLinkEnc);
+  const isVideo = mime.startsWith('video/');
+  const box = document.getElementById('modal-box');
+
+  const mediaHtml = thumb
+    ? (isVideo ? `<video src="${thumb}" controls style="width:100%;border-radius:var(--r);max-height:45vh;background:#000;"></video>` : `<img src="${thumb.replace('s400','s800')}" style="width:100%;border-radius:var(--r);max-height:45vh;object-fit:contain;background:#000;">`)
+    : `<div style="width:100%;height:160px;background:var(--bg3);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:48px;">${isVideo?'🎬':'🖼️'}</div>`;
+
+  const isPosted = status === 'posted';
+  const isReady = status === 'ready';
+
+  box.innerHTML = `<div class="modal-title">${isVideo?'🎬':'🖼️'} ${name}</div>
+    <div class="media-preview">
+      ${mediaHtml}
+      <div class="media-meta">
+        <span>${currentDriveFolder}</span>
+        <span>${isVideo ? 'Video' : 'Photo'}</span>
+        ${isPosted ? '<span style="color:var(--green)">✓ Marked as posted</span>' : isReady ? '<span style="color:var(--accent)">Ready to post</span>' : ''}
+      </div>
+      <div class="media-actions">
+        <button class="media-action-btn" onclick="window.open('${viewLink}','_blank')">Open in Drive</button>
+        <button class="media-action-btn ${isReady?'primary':''}" onclick="setMediaStatus('${fileId}','${isReady?'none':'ready'}')">
+          ${isReady ? '★ Ready' : 'Mark Ready'}
+        </button>
+        <button class="media-action-btn ${isPosted?'done':''}" onclick="setMediaStatus('${fileId}','${isPosted?'none':'posted'}')">
+          ${isPosted ? '✓ Posted' : 'Mark Posted'}
+        </button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Close</button>
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+};
+
+window.setMediaStatus = function(fileId, status){
+  if(!galleryMeta[fileId]) galleryMeta[fileId] = {};
+  galleryMeta[fileId].status = status;
+  saveGalleryMeta();
+  closeModal();
+  loadGalleryTab();
+};
 
 // ── DAILY QUOTE ───────────────────────────────────────────────────
 const QUOTES = [
