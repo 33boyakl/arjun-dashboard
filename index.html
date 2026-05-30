@@ -551,7 +551,7 @@ function initDB(cfg){
     document.getElementById('setup-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     setSyncStatus('syncing','Connecting…');
-    subscribeAll(); loadChatHistory(); checkGCalToken(); checkDriveToken(); loadGalleryMeta(); loadDailyQuote(); renderSocialLog();
+    subscribeAll(); loadChatHistory(); handleOAuthReturn(); checkGCalToken(); loadGalleryMeta(); loadDailyQuote(); renderSocialLog();
   }catch(e){document.getElementById('setup-error').style.display='block';}
 }
 
@@ -583,12 +583,7 @@ function genId(){return Date.now().toString(36)+Math.random().toString(36).slice
 
 // ── GOOGLE CALENDAR ───────────────────────────────────────────────
 function checkGCalToken(){
-  const hash=window.location.hash;
-  if(hash.includes('access_token')){
-    const params=new URLSearchParams(hash.slice(1));
-    const token=params.get('access_token');
-    if(token){localStorage.setItem('arjun_gcal_token',token);window.location.hash='';}
-  }
+  // Token parsing now handled by handleOAuthReturn()
   if(localStorage.getItem('arjun_gcal_token')){
     const btn=document.getElementById('gcal-btn');
     if(btn){btn.innerHTML='✓ Google Calendar connected';btn.classList.add('connected');}
@@ -1328,22 +1323,28 @@ function getDriveToken(){
 }
 
 function checkDriveToken(){
-  // Check if returning from OAuth with drive token
+  // Token parsing now handled by handleOAuthReturn()
+}
+
+function handleOAuthReturn(){
   const hash = window.location.hash;
-  if(hash.includes('access_token') && hash.includes('drive')){
-    const params = new URLSearchParams(hash.slice(1));
-    const token = params.get('access_token');
-    if(token){ localStorage.setItem(DRIVE_TOKEN_KEY, token); window.location.hash=''; }
-  }
-  // Also handle combined token (calendar+drive in same auth)
-  if(hash.includes('access_token')){
-    const params = new URLSearchParams(hash.slice(1));
-    const token = params.get('access_token');
-    if(token){
-      // Store as both gcal and drive token if scopes were combined
-      const state = params.get('state')||'';
-      if(state.includes('drive')) localStorage.setItem(DRIVE_TOKEN_KEY, token);
-    }
+  if(!hash.includes('access_token')) return;
+  const params = new URLSearchParams(hash.slice(1));
+  const token = params.get('access_token');
+  const state = params.get('state') || '';
+  if(!token) return;
+  // Always save as both — Google returns one token covering all requested scopes
+  localStorage.setItem('arjun_gcal_token', token);
+  localStorage.setItem(DRIVE_TOKEN_KEY, token);
+  // Clear hash cleanly
+  history.replaceState(null, '', window.location.pathname);
+  // Update UI
+  const btn = document.getElementById('gcal-btn');
+  if(btn){ btn.innerHTML='✓ Google Calendar connected'; btn.classList.add('connected'); }
+  renderDriveStatusBar();
+  if(state === 'drive' || state === 'both'){
+    // Switch to gallery tab and load
+    setTimeout(()=>{ loadGalleryTab(); }, 500);
   }
 }
 
@@ -1358,7 +1359,7 @@ window.connectGoogleDrive = function(){
   const redirectUri = encodeURIComponent(location.origin + location.pathname);
   // Request both Calendar AND Drive scopes together
   const scope = encodeURIComponent(GCAL_SCOPE + ' ' + DRIVE_SCOPE);
-  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${cid}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=drive&prompt=consent`;
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${cid}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=both&prompt=consent`;
 };
 
 function renderDriveStatusBar(){
